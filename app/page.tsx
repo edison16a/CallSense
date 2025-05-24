@@ -1,4 +1,5 @@
 'use client'
+
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -56,22 +57,17 @@ async function askComfortingQuestions(text: string): Promise<string[]> {
           ]
         })
       }
-    );
-    // cast to help TS infer types
-    const data = (await res.json()) as { candidates?: { content?: string }[] };
-    // ensure raw is a string
-    const raw: string = data.candidates?.[0]?.content ?? '';
-    // split on newlines or common list markers, trim and filter out empties
+    )
+    const data = (await res.json()) as { candidates?: { content?: string }[] }
+    const raw: string = data.candidates?.[0]?.content ?? ''
     return raw
       .split(/\r?\n|•|–/)
-      .map((s: string) => s.trim())
-      .filter((s: string) => s.length > 0);
-  } catch (error) {
-    console.error('askComfortingQuestions error:', error);
-    return [];
+      .map(s => s.trim())
+      .filter(s => s.length > 0)
+  } catch {
+    return []
   }
 }
-
 
 interface PriorityCall {
   id: string
@@ -83,143 +79,16 @@ interface CurrentCall {
   transcript: string[]
 }
 
-
-// INITIAL PRIORITY LIST (2025-05-24 IDs + wait times)
 const initialPriority: PriorityCall[] = [
   { id: '2025-05-24-001', level: 'High',   waitTime: '5 min' },
   { id: '2025-05-24-002', level: 'Medium', waitTime: '7 min' },
   { id: '2025-05-24-003', level: 'Low',    waitTime: '3 min' },
 ]
 
-// SAMPLE CONVERSATIONS: 10 transcripts, each with 10 lines
-const sampleTranscripts: string[][] = [
-  [
-    'Dispatcher: “911, what is your emergency?”',
-    'Caller: “There is a fire at 123 Elm St.”',
-    'Dispatcher: “What floor is the fire on?”',
-    'Caller: “Second floor.”',
-    'Dispatcher: “Are there any injuries?”',
-    'Caller: “No injuries yet.”',
-    'Dispatcher: “Fire department is en route.”',
-    'Caller: “Please hurry.”',
-    'Dispatcher: “Stay on the line and exit safely.”',
-    'Caller: “Okay, thank you.”'
-  ],
-  [
-    'Dispatcher: “911, state your emergency.”',
-    'Caller: “Someone is breaking into my house.”',
-    'Dispatcher: “Are you in a safe location?”',
-    'Caller: “I am hiding in a closet.”',
-    'Dispatcher: “Police are on the way.”',
-    'Caller: “Please be quick.”',
-    'Dispatcher: “Maintain silence; help is coming.”',
-    'Caller: “Thank you.”',
-    'Dispatcher: “Officers will arrive shortly.”',
-    'Caller: “Got it.”'
-  ],
-  [
-    'Dispatcher: “911, what happened?”',
-    'Caller: “I heard gunshots outside.”',
-    'Dispatcher: “Where are you located?”',
-    'Caller: “456 Oak Ave.”',
-    'Dispatcher: “What type of building?”',
-    'Caller: “Apartment complex.”',
-    'Dispatcher: “Police are responding now.”',
-    'Caller: “Stay inside.”',
-    'Dispatcher: “Lock doors and stay hidden.”',
-    'Caller: “Understood.”'
-  ],
-  [
-    'Dispatcher: “911, can you describe your emergency?”',
-    'Caller: “I was in a car accident.”',
-    'Dispatcher: “Are you injured?”',
-    'Caller: “Minor cuts.”',
-    'Dispatcher: “Ambulance and police en route.”',
-    'Caller: “Thank you.”',
-    'Dispatcher: “Stay in your vehicle.”',
-    'Caller: “Okay.”',
-    'Dispatcher: “Help is arriving.”',
-    'Caller: “Good.”'
-  ],
-  [
-    'Dispatcher: “911, what is the address?”',
-    'Caller: “789 Pine Rd, possible break-in.”',
-    'Dispatcher: “Describe the suspect.”',
-    'Caller: “Male, black jacket.”',
-    'Dispatcher: “Police are arriving.”',
-    'Caller: “I will wait inside.”',
-    'Dispatcher: “Stay on the line.”',
-    'Caller: “Yes.”',
-    'Dispatcher: “Units are there.”',
-    'Caller: “Thanks.”'
-  ],
-  [
-    'Dispatcher: “911, go ahead.”',
-    'Caller: “My neighbor needs medical help.”',
-    'Dispatcher: “What is the issue?”',
-    'Caller: “He collapsed.”',
-    'Dispatcher: “EMS is dispatched.”',
-    'Caller: “Please hurry.”',
-    'Dispatcher: “Are you performing CPR?”',
-    'Caller: “Yes, I am.”',
-    'Dispatcher: “Continue until help arrives.”',
-    'Caller: “Okay.”'
-  ],
-  [
-    'Dispatcher: “911, what is the nature of the call?”',
-    'Caller: “Dog is attacking me.”',
-    'Dispatcher: “Where are you?”',
-    'Caller: “Central Park.”',
-    'Dispatcher: “Animal control and EMS sent.”',
-    'Caller: “I am bleeding.”',
-    'Dispatcher: “Apply pressure to wound.”',
-    'Caller: “Doing it.”',
-    'Dispatcher: “Help is arriving.”',
-    'Caller: “Thank you.”'
-  ],
-  [
-    'Dispatcher: “911, what emergency?”',
-    'Caller: “Gas leak smell inside.”',
-    'Dispatcher: “Evacuate immediately.”',
-    'Caller: “Leaving now.”',
-    'Dispatcher: “Fire and hazmat on the way.”',
-    'Caller: “Okay.”',
-    'Dispatcher: “Stay clear of building.”',
-    'Caller: “Understood.”',
-    'Dispatcher: “Hazmat crew there.”',
-    'Caller: “Thank you.”'
-  ],
-  [
-    'Dispatcher: “911, tell me the problem.”',
-    'Caller: “My child is missing.”',
-    'Dispatcher: “When was last seen?”',
-    'Caller: “20 minutes ago.”',
-    'Dispatcher: “Sending search teams.”',
-    'Caller: “Please find her.”',
-    'Dispatcher: “Stay on the line.”',
-    'Caller: “Okay.”',
-    'Dispatcher: “Teams are searching.”',
-    'Caller: “Thank you.”'
-  ],
-  [
-    'Dispatcher: “911, what can I help you with?”',
-    'Caller: “There’s a chemical spill.”',
-    'Dispatcher: “Where?”',
-    'Caller: “Downtown lab.”',
-    'Dispatcher: “Hazmat and police dispatched.”',
-    'Caller: “Evacuating area.”',
-    'Dispatcher: “Keep back.”',
-    'Caller: “Yes.”',
-    'Dispatcher: “Units arriving.”',
-    'Caller: “Thanks.”'
-  ],
-]
-
 export default function DashboardPage() {
   // Sidebar view
   const [view, setView] = useState<'priority' | 'current' | 'live'>('priority')
-  const [comfortingQuestions, setComfortingQuestions] = useState<string[]>([]);
-
+  const [comfortingQuestions, setComfortingQuestions] = useState<string[]>([])
 
   // Lists state
   const [priorityList, setPriorityList] = useState<PriorityCall[]>(initialPriority)
@@ -227,17 +96,53 @@ export default function DashboardPage() {
   const [transcriptVisible, setTranscriptVisible] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Filter for priority level
-  const [priorityFilter, setPriorityFilter] = useState<'All'|'High'|'Medium'|'Low'>('All')
-
-  // Live-call transcripts & classification
+  // For live call transcription
   const [liveTranscripts, setLiveTranscripts] = useState<string[]>([])
   const [classification, setClassification] = useState('')
+  const [listening, setListening] = useState(false)
+  const recognitionRef = useRef<any>(null)
+
   const nextId = useRef(4)
 
   // Dispatch tracking
   const [dispatched, setDispatched] = useState<Record<string, number>>({})
   const [tick, setTick] = useState(0)
+
+  // Setup browser speech recognition
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !recognitionRef.current) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+      if (SpeechRecognition) {
+        const rec = new SpeechRecognition()
+        rec.continuous = true
+        rec.interimResults = false
+        rec.lang = 'en-US'
+        rec.onresult = (event: any) => {
+          const transcript = Array.from(event.results)
+            .slice(event.resultIndex)
+            .map((r: any) => r[0].transcript)
+            .join('')
+          setLiveTranscripts(prev => [...prev, `User: ${transcript}`])
+        }
+        rec.onerror = (e: any) => {
+          console.error('Speech recognition error', e)
+          setListening(false)
+        }
+        rec.onend = () => {
+          setListening(false)
+        }
+        recognitionRef.current = rec
+      }
+    }
+  }, [])
+
+  // Start/stop recognition when listening toggles
+  useEffect(() => {
+    if (recognitionRef.current) {
+      if (listening) recognitionRef.current.start()
+      else recognitionRef.current.stop()
+    }
+  }, [listening])
 
   // Forcing re-render every second to update progress bars
   useEffect(() => {
@@ -245,95 +150,60 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [])
 
-  // Toggle transcript visibility
+  const toggleListening = () => setListening(l => !l)
+
   const toggleTranscript = (id: string) =>
     setTranscriptVisible(prev => ({ ...prev, [id]: !prev[id] }))
 
-  // Send Units handler with dispatch progress
   const sendUnits = (id: string, waitTime: string) => {
-
     setDispatched(prev => ({ ...prev, [id]: Date.now() }))
   }
 
-  // Manual action handlers for live call
   const handleHighlight = () => alert('Highlighting current text')
   const handleMarkDangerous = () => setClassification('Manually marked as Dangerous')
-  const handleEndCall = () => alert('Call ended')
   const handleAlert = () => alert('Emergency alert sent!')
 
-  // Filtered lists
-  const filteredPriority =
-    priorityFilter === 'All'
-      ? priorityList
-      : priorityList.filter(c => c.level === priorityFilter)
+  const handleEndCall = async () => {
+    if (recognitionRef.current) recognitionRef.current.stop()
+    setListening(false)
 
+    const text = liveTranscripts.join(' ')
+    let level = await classifyTranscript(text)
+    if (level === 'Unknown') {
+      level = /fire|smoke|shots|gun/i.test(text)
+        ? 'High'
+        : /fight|missing|accident|burglary/i.test(text)
+        ? 'Medium'
+        : 'Low'
+    }
+
+    const idNum = nextId.current++
+    const newId = `2025-05-24-${String(idNum).padStart(3, '0')}`
+
+    const newCurrent: CurrentCall = {
+      id: newId,
+      transcript: [...liveTranscripts, `AI Highlight: Danger Level: ${level}`],
+    }
+    setCurrentCalls(prev => [newCurrent, ...prev.slice(0, 9)])
+
+    const waitTime = `${Math.ceil(Math.random() * 10)} min`
+    const newPriority: PriorityCall = { id: newId, level, waitTime }
+    setPriorityList(prev => [newPriority, ...prev.slice(0, 9)])
+
+    setClassification(`AI Highlight: Danger Level: ${level}`)
+    const questions = await askComfortingQuestions(text)
+    setComfortingQuestions(questions)
+
+    setLiveTranscripts([])
+  }
+
+  const filteredPriority = priorityList
   const filteredCurrent = currentCalls.filter(call =>
     call.id.includes(searchTerm) ||
     call.transcript.some(line =>
       line.toLowerCase().includes(searchTerm.toLowerCase())
     )
   )
-
-  // Auto-run long conversations
-  useEffect(() => {
-    let active = true
-
-    async function runConversation() {
-      while (active) {
-        setLiveTranscripts([])
-        setClassification('')
-
-        // pick a random convo
-        const convo = sampleTranscripts[
-          Math.floor(Math.random() * sampleTranscripts.length)
-        ]
-
-        // play through it with 1–5s random delays
-        for (const line of convo) {
-          if (!active) return
-          setLiveTranscripts(prev => [...prev, line])
-          const delay = 1000 + Math.random() * 4000  // between 1s and 5s
-          await new Promise(r => setTimeout(r, delay))
-        }
-
-
-
-        const text = convo.join(' ')
-        let level = await classifyTranscript(text)
-        if (level === 'Unknown') {
-          level = /fire|smoke|shots|gun/i.test(text)
-          ? 'High'
-          : /fight|missing|accident|disoriented|burglary/i.test(text)
-          ? 'Medium'
-          : 'Low'
-        }
-
-        // generate IDs
-        const idNum = String(nextId.current++).padStart(3, '0')
-        const newId = `2025-05-24-${idNum}`
-
-        // add to current
-        const newCurrent: CurrentCall = {
-          id: newId,
-          transcript: [
-            ...convo,
-            `AI Highlight: Danger Level: ${level}`,
-          ],
-        }
-        setCurrentCalls(prev => [newCurrent, ...prev.slice(0, 9)])
-
-        // add to priority
-        const waitTime = `${Math.ceil(Math.random() * 10)} min`
-        const newPriority: PriorityCall = { id: newId, level, waitTime }
-        setPriorityList(prev => [newPriority, ...prev.slice(0, 9)])
-
-        setClassification(`AI Highlight: Danger Level: ${level}`)
-      }
-    }
-
-    runConversation()
-    return () => { active = false }
-  }, [])
 
   return (
     <div className="dashboard-container">
@@ -371,17 +241,10 @@ export default function DashboardPage() {
               <h2>Call Priority</h2>
               <div className="panel-actions">
                 {(['All','High','Medium','Low'] as const).map(level => (
-                  <button
-                    key={level}
-                    className="action-btn"
-                    onClick={() => setPriorityFilter(level)}
-                  >
-                    {level}
-                  </button>
+                  <button key={level} className="action-btn">{level}</button>
                 ))}
               </div>
             </div>
-            {/* Column labels */}
             <div className="call-summary panel-header" style={{ fontWeight: 'bold' }}>
               <span className="call-from">Call ID</span>
               <span>Priority</span>
@@ -482,6 +345,13 @@ export default function DashboardPage() {
             >
               <h2>Live Call</h2>
               <div className="live-actions" style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  className="toggle-btn"
+                  style={{ backgroundColor: '#007bff', color: '#fff', borderRadius: '50%', padding: '8px', fontSize: '18px' }}
+                  onClick={toggleListening}
+                >
+                  🎤
+                </button>
                 <button className="toggle-btn" onClick={handleHighlight}>Highlight Text</button>
                 <button className="toggle-btn" onClick={handleMarkDangerous}>Mark as Dangerous</button>
                 <button className="toggle-btn" onClick={handleAlert}>Alert</button>
@@ -517,6 +387,14 @@ export default function DashboardPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+            {comfortingQuestions.length > 0 && (
+              <div className="comforting-questions panel-section">
+                <h3>💬 Suggested Questions to Ask:</h3>
+                {comfortingQuestions.map((q, i) => (
+                  <p key={i} className="comforting-question">{q}</p>
+                ))}
+              </div>
+            )}
           </section>
         )}
       </main>
