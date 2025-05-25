@@ -108,7 +108,21 @@ a:hover {
   gap: 1.5rem;
   padding: 2rem;
 }
+.important-details {
+  list-style: disc inside;
+  margin: 4px 0 0 20px;
+  padding: 0;
+}
 
+/* Each extracted detail */
+.important-detail {
+
+  font-weight: bold;
+  padding: 2px 6px;
+  padding-left: 12px;
+  border-radius: 4px;
+  margin: 2px 0;
+}
 /* === Sidebar === */
 .sidebar {
   background-color: var(--white);

@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /** ─── ADD YOUR GEMINI KEY ───────────────────────────────────────────────── **/
-const GEMINI_API_KEY = 'AIzaSyD-ipc8Yrren25424KBLOutdUPHnLICbSA'
+const GEMINI_API_KEY = 'AIzaSyBweOCJwFqjrh-jye9ndoD-YhY7HNZUKWU'
 
-/** ─── HELPER TO CALL GEMINI ─────────────────────────────────────────────── **/
+/** ─── EXISTING HELPERS ───────────────────────────────────────────────────── **/
+
 async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'Unknown'> {
   try {
     const res = await fetch(
@@ -19,7 +20,10 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
             {
               parts: [
                 {
-                  text: `Transcript: ${text}\nRate this high, medium, or low priority.`
+                  text: `Transcript:\n${text}`
+                },
+                {
+                  text: `\nRate this high (any death involved), medium, or low priority.`
                 }
               ]
             }
@@ -40,6 +44,10 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
 
 async function askComfortingQuestions(text: string): Promise<string[]> {
   try {
+    const parts = [
+      `Transcript:\n${text}`,
+      `\nWhat other helpful questions or comforting questions can I ask?`
+    ]
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -47,13 +55,7 @@ async function askComfortingQuestions(text: string): Promise<string[]> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [
-            {
-              parts: [
-                {
-                  text: `Transcript: ${text}\nWhat other helpful questions or comforting questions can I ask?`
-                }
-              ]
-            }
+            { parts: parts.map(t => ({ text: t })) }
           ]
         })
       }
@@ -69,6 +71,104 @@ async function askComfortingQuestions(text: string): Promise<string[]> {
   }
 }
 
+async function askImportantDetails(text: string): Promise<string[]> {
+  if (!text || !text.trim()) {
+    return []
+  }
+
+  try {
+    const promptLines = [
+      `Using the following transcript, please return which details are important for law enforcement (address, name, and what's happening). If there is nothing important, return an empty space. Do not use formatting such as astericks or titles.`,
+      `\nThen after that, using the transcript provided, make additional questions as needed to clarify the situation.`,
+      `\nTranscript:\n${text}`
+    ]
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            { parts: promptLines.map(t => ({ text: t })) }
+          ]
+        })
+      }
+    )
+
+    const data = await res.json() as {
+      candidates?: Array<{
+        content?: any
+        output?: { content?: any }
+      }>
+    }
+
+    const raw = data.candidates?.[0]?.content
+             ?? data.candidates?.[0]?.output?.content
+             ?? ''
+
+    if (
+      raw &&
+      typeof raw === 'object' &&
+      Array.isArray((raw as any).parts)
+    ) {
+      const parts = (raw as any).parts as Array<{ text?: string }>
+      return parts
+        .map(p => p.text?.trim() ?? '')
+        .filter(Boolean)
+    }
+
+    if (Array.isArray(raw)) {
+      return (raw as any[])
+        .map(item => String(item).trim())
+        .filter(s => s.length > 0)
+    }
+
+    const rawText = typeof raw === 'string'
+      ? raw
+      : JSON.stringify(raw)
+    const details = rawText
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+
+    return details
+
+  } catch (e) {
+    console.error('askImportantDetails error →', e)
+    return []
+  }
+}
+
+async function askFurtherQuestions(text: string): Promise<string[]> {
+  try {
+    const parts = [
+      `Using the following transcript, give me 5 questions I can ask to make the caller feel better or to ensure his safety.`,
+      `\nTranscript:\n${text}`
+    ]
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            { parts: parts.map(t => ({ text: t })) }
+          ]
+        })
+      }
+    )
+    const data = (await res.json()) as { candidates?: { content?: string }[] }
+    const raw: string = data.candidates?.[0]?.content ?? ''
+    return raw
+      .split(/\r?\n|•|–/)
+      .map(s => s.trim())
+      .filter(s => s.length > 0)
+  } catch {
+    return []
+  }
+}
+
+
 interface PriorityCall {
   id: string
   level: 'High' | 'Medium' | 'Low'
@@ -79,16 +179,13 @@ interface CurrentCall {
   transcript: string[]
 }
 
-const initialPriority: PriorityCall[] = [
-  { id: '2025-05-24-001', level: 'High',   waitTime: '5 min' },
-  { id: '2025-05-24-002', level: 'Medium', waitTime: '7 min' },
-  { id: '2025-05-24-003', level: 'Low',    waitTime: '3 min' },
-]
+const initialPriority: PriorityCall[] = []
 
 export default function DashboardPage() {
   // Sidebar view
   const [view, setView] = useState<'priority' | 'current' | 'live'>('priority')
   const [comfortingQuestions, setComfortingQuestions] = useState<string[]>([])
+  const [furtherQuestions, setFurtherQuestions] = useState<string[]>([])
 
   // Lists state
   const [priorityList, setPriorityList] = useState<PriorityCall[]>(initialPriority)
@@ -98,9 +195,11 @@ export default function DashboardPage() {
 
   // For live call transcription
   const [liveTranscripts, setLiveTranscripts] = useState<string[]>([])
+  const [importantDetails, setImportantDetails] = useState<Record<number, string[]>>({})
   const [classification, setClassification] = useState('')
   const [listening, setListening] = useState(false)
   const recognitionRef = useRef<any>(null)
+
 
   const nextId = useRef(4)
 
@@ -122,7 +221,7 @@ export default function DashboardPage() {
             .slice(event.resultIndex)
             .map((r: any) => r[0].transcript)
             .join('')
-          setLiveTranscripts(prev => [...prev, `User: ${transcript}`])
+          setLiveTranscripts(prev => [...prev, `Caller: ${transcript}`])
         }
         rec.onerror = (e: any) => {
           console.error('Speech recognition error', e)
@@ -139,8 +238,7 @@ export default function DashboardPage() {
   // Start/stop recognition when listening toggles
   useEffect(() => {
     if (recognitionRef.current) {
-      if (listening) recognitionRef.current.start()
-      else recognitionRef.current.stop()
+      listening ? recognitionRef.current.start() : recognitionRef.current.stop()
     }
   }, [listening])
 
@@ -151,23 +249,25 @@ export default function DashboardPage() {
   }, [])
 
   const toggleListening = () => setListening(l => !l)
-
   const toggleTranscript = (id: string) =>
     setTranscriptVisible(prev => ({ ...prev, [id]: !prev[id] }))
-
-  const sendUnits = (id: string, waitTime: string) => {
+  const sendUnits = (id: string, waitTime: string) =>
     setDispatched(prev => ({ ...prev, [id]: Date.now() }))
-  }
-
   const handleHighlight = () => alert('Highlighting current text')
   const handleMarkDangerous = () => setClassification('Manually marked as Dangerous')
   const handleAlert = () => alert('Emergency alert sent!')
+
+  const handleFurtherQuestions = async () => {
+    const text = liveTranscripts.join('\n')
+    const questions = await askFurtherQuestions(text)
+    setFurtherQuestions(questions)
+  }
 
   const handleEndCall = async () => {
     if (recognitionRef.current) recognitionRef.current.stop()
     setListening(false)
 
-    const text = liveTranscripts.join(' ')
+    const text = liveTranscripts.join('\n')
     let level = await classifyTranscript(text)
     if (level === 'Unknown') {
       level = /fire|smoke|shots|gun/i.test(text)
@@ -182,19 +282,28 @@ export default function DashboardPage() {
 
     const newCurrent: CurrentCall = {
       id: newId,
-      transcript: [...liveTranscripts, `AI Highlight: Danger Level: ${level}`],
+      transcript: [...liveTranscripts, `Analyzed Danger Level: ${level}`],
     }
     setCurrentCalls(prev => [newCurrent, ...prev.slice(0, 9)])
 
     const waitTime = `${Math.ceil(Math.random() * 10)} min`
-    const newPriority: PriorityCall = { id: newId, level, waitTime }
+    const newPriority = { id: newId, level, waitTime }
     setPriorityList(prev => [newPriority, ...prev.slice(0, 9)])
 
-    setClassification(`AI Highlight: Danger Level: ${level}`)
-    const questions = await askComfortingQuestions(text)
-    setComfortingQuestions(questions)
+    setClassification(`AI Analysis: Danger Level: ${level}`)
 
+    // get comforting questions
+    const comforting = await askComfortingQuestions(text)
+    setComfortingQuestions(comforting)
+
+    // freeform important details
+    const details = await askImportantDetails(text)
+    setImportantDetails({ 0: details })
+
+
+    // clear for next call
     setLiveTranscripts([])
+    setFurtherQuestions([])
   }
 
   const filteredPriority = priorityList
@@ -319,8 +428,8 @@ export default function DashboardPage() {
                       onClick={() => toggleTranscript(id)}
                     >
                       {transcriptVisible[id]
-                        ? 'Hide AI Highlight'
-                        : 'View AI Highlight'}
+                        ? 'Hide Transcript'
+                        : 'View Transcript'}
                     </button>
                   </div>
                   {transcriptVisible[id] && (
@@ -354,7 +463,7 @@ export default function DashboardPage() {
                 </button>
                 <button className="toggle-btn" onClick={handleHighlight}>Highlight Text</button>
                 <button className="toggle-btn" onClick={handleMarkDangerous}>Mark as Dangerous</button>
-                <button className="toggle-btn" onClick={handleAlert}>Alert</button>
+                <button className="toggle-btn" onClick={handleFurtherQuestions}>Generate Questions</button>
                 <button className="toggle-btn" onClick={handleEndCall}>End Call</button>
               </div>
             </div>
@@ -387,11 +496,52 @@ export default function DashboardPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+
             {comfortingQuestions.length > 0 && (
               <div className="comforting-questions panel-section">
                 <h3>💬 Suggested Questions to Ask:</h3>
                 {comfortingQuestions.map((q, i) => (
                   <p key={i} className="comforting-question">{q}</p>
+                ))}
+              </div>
+            )}
+
+            {/* ─── Important Details Panel ───────────────────────────────────────── */}
+<section className="important-details-panel panel-section">
+  <h3>📋 Important Details</h3>
+  <ul>
+    {Object.values(importantDetails)
+      .flat()
+      .filter(d => typeof d === 'string' && d.trim().length > 3)
+      .flatMap(detail =>
+        detail
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+      )
+      .map((line, idx) => (
+        <React.Fragment key={idx}>
+          {/* after the first bullet, insert “Questions:” */}
+          {idx === 1 && (
+            <li className="questions-title">
+              <strong>Questions:</strong>
+            </li>
+          )}
+          <li className="important-detail">{line}</li>
+        </React.Fragment>
+      ))}
+  </ul>
+</section>
+
+
+            
+
+            {/* ─── Further Questions Panel ───────────────────────────────────────── */}
+            {furtherQuestions.length > 0 && (
+              <div className="further-questions panel-section">
+                <h3>❓ Further Questions</h3>
+                {furtherQuestions.map((q, i) => (
+                  <p key={i} className="further-question">{q}</p>
                 ))}
               </div>
             )}
