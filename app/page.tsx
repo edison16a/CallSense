@@ -23,7 +23,7 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
                   text: `Transcript:\n${text}`
                 },
                 {
-                  text: `\nRate this high (any death involved), medium, or low priority.`
+                  text: `\nRate this high (if any death involved), medium, or low priority. Only return one word: high/medium/low`
                 }
               ]
             }
@@ -34,8 +34,8 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
     const json = await res.json()
     const ai = (json.candidates?.[0]?.content || '').toLowerCase()
     if (ai.includes('high'))   return 'High'
-    if (ai.includes('medium')) return 'Medium'
-    if (ai.includes('low'))    return 'Low'
+    else if (ai.includes('medium')) return 'Medium'
+    else if (ai.includes('low'))    return 'Low'
     return 'Unknown'
   } catch {
     return 'Unknown'
@@ -508,7 +508,7 @@ export default function DashboardPage() {
 
             {/* ─── Important Details Panel ───────────────────────────────────────── */}
 <section className="important-details-panel panel-section">
-  <h3>📋 Important Details</h3>
+  <h3>📋 Important Details:</h3>
   <ul>
     {Object.values(importantDetails)
       .flat()
@@ -523,9 +523,8 @@ export default function DashboardPage() {
         <React.Fragment key={idx}>
           {/* after the first bullet, insert “Questions:” */}
           {idx === 1 && (
-            <li className="questions-title">
-              <strong>Questions:</strong>
-            </li>
+            <h3>❓ Questions:</h3>
+
           )}
           <li className="important-detail">{line}</li>
         </React.Fragment>
