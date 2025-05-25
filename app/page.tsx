@@ -3,10 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-/** ─── ADD YOUR GEMINI KEY ───────────────────────────────────────────────── **/
-const GEMINI_API_KEY = 'AIzaSyBweOCJwFqjrh-jye9ndoD-YhY7HNZUKWU'
-
-/** ─── EXISTING HELPERS ───────────────────────────────────────────────────── **/
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY
 
 async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'Unknown'> {
   try {
@@ -23,7 +20,7 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
                   text: `Transcript:\n${text}`
                 },
                 {
-                  text: `\nRate this high (if any death involved), medium, or low priority. Only return one word: high/medium/low`
+                  text: `\nRate this high (if any guns or deaths involved), medium (if its a car crash or other), or low priority (Like cat stuck in tree or just feeling nervous). Please indicate in the response if it is high/medium/low use those exact words`
                 }
               ]
             }
@@ -32,7 +29,8 @@ async function classifyTranscript(text: string): Promise<'High'|'Medium'|'Low'|'
       }
     )
     const json = await res.json()
-    const ai = (json.candidates?.[0]?.content || '').toLowerCase()
+    console.log(json)
+    const ai = (json.candidates?.[0]?.content.parts[0].text || 'medium').toLowerCase()
     if (ai.includes('high'))   return 'High'
     else if (ai.includes('medium')) return 'Medium'
     else if (ai.includes('low'))    return 'Low'
@@ -182,32 +180,31 @@ interface CurrentCall {
 const initialPriority: PriorityCall[] = []
 
 export default function DashboardPage() {
-  // Sidebar view
   const [view, setView] = useState<'priority' | 'current' | 'live'>('priority')
   const [comfortingQuestions, setComfortingQuestions] = useState<string[]>([])
   const [furtherQuestions, setFurtherQuestions] = useState<string[]>([])
 
-  // Lists state
+  // Lists
   const [priorityList, setPriorityList] = useState<PriorityCall[]>(initialPriority)
   const [currentCalls, setCurrentCalls] = useState<CurrentCall[]>([])
   const [transcriptVisible, setTranscriptVisible] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState('')
 
-  // For live call transcription
+  // Transcription
   const [liveTranscripts, setLiveTranscripts] = useState<string[]>([])
   const [importantDetails, setImportantDetails] = useState<Record<number, string[]>>({})
   const [classification, setClassification] = useState('')
   const [listening, setListening] = useState(false)
+  const [loading, setLoading] = useState(false)
   const recognitionRef = useRef<any>(null)
 
 
   const nextId = useRef(4)
 
-  // Dispatch tracking
   const [dispatched, setDispatched] = useState<Record<string, number>>({})
   const [tick, setTick] = useState(0)
 
-  // Setup browser speech recognition
+  // Speech recognition
   useEffect(() => {
     if (typeof window !== 'undefined' && !recognitionRef.current) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
@@ -235,14 +232,12 @@ export default function DashboardPage() {
     }
   }, [])
 
-  // Start/stop recognition when listening toggles
   useEffect(() => {
     if (recognitionRef.current) {
       listening ? recognitionRef.current.start() : recognitionRef.current.stop()
     }
   }, [listening])
 
-  // Forcing re-render every second to update progress bars
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000)
     return () => clearInterval(interval)
@@ -266,6 +261,16 @@ export default function DashboardPage() {
   const handleEndCall = async () => {
     if (recognitionRef.current) recognitionRef.current.stop()
     setListening(false)
+
+    // show loading and clear previous results
+    setLoading(true)
+    setClassification('')
+    setComfortingQuestions([])
+    setImportantDetails({})
+    setFurtherQuestions([])
+
+    // fake 3-second loading
+    await new Promise(resolve => setTimeout(resolve, 3000))
 
     const text = liveTranscripts.join('\n')
     let level = await classifyTranscript(text)
@@ -300,10 +305,9 @@ export default function DashboardPage() {
     const details = await askImportantDetails(text)
     setImportantDetails({ 0: details })
 
-
     // clear for next call
     setLiveTranscripts([])
-    setFurtherQuestions([])
+    setLoading(false)
   }
 
   const filteredPriority = priorityList
@@ -318,6 +322,13 @@ export default function DashboardPage() {
     <div className="dashboard-container">
       {/* Sidebar */}
       <aside className="sidebar">
+                <div
+          className={`nav-item ${view === 'live' ? 'active' : ''}`}
+          onClick={() => setView('live')}
+        >
+          <span className="nav-icon">🎤</span>
+          <span>Live Call</span>
+        </div>
         <div
           className={`nav-item ${view === 'priority' ? 'active' : ''}`}
           onClick={() => setView('priority')}
@@ -332,18 +343,11 @@ export default function DashboardPage() {
           <span className="nav-icon">📝</span>
           <span>Current Calls</span>
         </div>
-        <div
-          className={`nav-item ${view === 'live' ? 'active' : ''}`}
-          onClick={() => setView('live')}
-        >
-          <span className="nav-icon">🎤</span>
-          <span>Live Call</span>
-        </div>
+
       </aside>
 
-      {/* Main Content */}
+      {/* main content */}
       <main className="content">
-        {/* Priority View */}
         {view === 'priority' && (
           <section className="panel">
             <div className="panel-header">
@@ -401,7 +405,6 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* Current Calls View */}
         {view === 'current' && (
           <section className="panel">
             <div className="panel-header">
@@ -445,7 +448,7 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* Live Call View */}
+        {/*  live call*/}
         {view === 'live' && (
           <section className="current-call-panel">
             <div
@@ -482,31 +485,38 @@ export default function DashboardPage() {
                 ))}
               </AnimatePresence>
             </div>
-            <AnimatePresence>
-              {classification && (
-                <motion.div
-                  key="classification"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  className="classification"
-                >
-                  {classification}
-                </motion.div>
-              )}
-            </AnimatePresence>
 
-            {comfortingQuestions.length > 0 && (
-              <div className="comforting-questions panel-section">
-                <h3>💬 Suggested Questions to Ask:</h3>
-                {comfortingQuestions.map((q, i) => (
-                  <p key={i} className="comforting-question">{q}</p>
-                ))}
+            {loading ? (
+              <div className="loading-panel">
+                <p>Loading...</p>
               </div>
-            )}
+            ) : (
+              <>
+                <AnimatePresence>
+                  {classification && (
+                    <motion.div
+                      key="classification"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.4 }}
+                      className="classification"
+                    >
+                      {classification}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-            {/* ─── Important Details Panel ───────────────────────────────────────── */}
+                {comfortingQuestions.length > 0 && (
+                  <div className="comforting-questions panel-section">
+                    <h3>💬 Suggested Questions to Ask:</h3>
+                    {comfortingQuestions.map((q, i) => (
+                      <p key={i} className="comforting-question">{q}</p>
+                    ))}
+                  </div>
+                )}
+
+                {/* important details */}
 <section className="important-details-panel panel-section">
   <h3>📋 Important Details:</h3>
   <ul>
@@ -521,7 +531,7 @@ export default function DashboardPage() {
       )
       .map((line, idx) => (
         <React.Fragment key={idx}>
-          {/* after the first bullet, insert “Questions:” */}
+          {/* after the first bullet, insert stuff*/}
           {idx === 1 && (
             <h3>❓ Questions:</h3>
 
@@ -532,17 +542,15 @@ export default function DashboardPage() {
   </ul>
 </section>
 
-
-            
-
-            {/* ─── Further Questions Panel ───────────────────────────────────────── */}
-            {furtherQuestions.length > 0 && (
-              <div className="further-questions panel-section">
-                <h3>❓ Further Questions</h3>
-                {furtherQuestions.map((q, i) => (
-                  <p key={i} className="further-question">{q}</p>
-                ))}
-              </div>
+                {furtherQuestions.length > 0 && (
+                  <div className="further-questions panel-section">
+                    <h3>❓ Further Questions</h3>
+                    {furtherQuestions.map((q, i) => (
+                      <p key={i} className="further-question">{q}</p>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </section>
         )}
