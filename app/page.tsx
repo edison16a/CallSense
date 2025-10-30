@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const GEMINI_API_KEY = "AIzaSyCxBR6xbM3hITfubefRtV3rhEPAuPaiiaA"
+const GEMINI_API_KEY = process.env.GEMINI_KEY
 
 // --- Seed helpers & fake data ----------------------------------------------
 // ---------------------------------------------------------------------------
