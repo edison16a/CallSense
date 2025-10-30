@@ -15,12 +15,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header className="header">
-          <h1>CallSense</h1>
-          <div className="user-menu">
-            <span className="user-avatar">👤</span>
-          </div>
-        </header>
         <main className="content-wrapper">
           {children}
         </main>
