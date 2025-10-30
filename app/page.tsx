@@ -1,10 +1,10 @@
-// app/callsense/page.tsx (or wherever you mount this component)
+// app/callsense/page.tsx
 'use client'
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+const GEMINI_API_KEY = "AIzaSyCxBR6xbM3hITfubefRtV3rhEPAuPaiiaA"
 
 // --- Seed helpers & fake data ----------------------------------------------
 // ---------------------------------------------------------------------------
@@ -293,7 +293,7 @@ export default function DashboardPage() {
 
   // Load sounds
   useEffect(() => {
-    sendSound.current = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYB...') // very short silent/placeholder
+    sendSound.current = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYB...') // placeholder
     doneSound.current = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYB...')
   }, [])
 
@@ -340,7 +340,8 @@ export default function DashboardPage() {
         rec.onerror = (e: any) => {
           console.error('Speech recognition error', e)
           setListening(false)
-          push('Mic error — stopped listening.')
+          // no em dash
+          push('Mic error, stopped listening.')
         }
         rec.onend = () => {
           setListening(false)
@@ -373,7 +374,7 @@ export default function DashboardPage() {
     push('Highlighted current text.')
   }
   const handleMarkDangerous = () => {
-    setClassification('Manually marked as Dangerous')
+    setClassification('Manually marked as dangerous')
     push('Call manually marked as dangerous.')
   }
   const handleAlert = () => {
@@ -397,7 +398,7 @@ export default function DashboardPage() {
     setImportantDetails({})
     setFurtherQuestions([])
 
-    // fake 3-second loading
+    // fake 3 second loading
     await new Promise(resolve => setTimeout(resolve, 3000))
 
     const text = liveTranscripts.join('\n') || 'Caller: (no transcript captured)'
@@ -413,7 +414,8 @@ export default function DashboardPage() {
     const newId = `CS-${Date.now().toString().slice(-6)}`
     const newCurrent: CurrentCall = {
       id: newId,
-      transcript: [...liveTranscripts, `Analyzed Danger Level: ${level}`, `Timestamp: ${nowStamp()}`],
+      // no "Analyzed" and no "AI"
+      transcript: [...liveTranscripts, `Danger Level: ${level}`, `Timestamp: ${nowStamp()}`],
     }
     setCurrentCalls(prev => [newCurrent, ...prev.slice(0, 49)])
 
@@ -421,7 +423,8 @@ export default function DashboardPage() {
     const newPriority = { id: newId, level, waitTime }
     setPriorityList(prev => [newPriority, ...prev.slice(0, 49)])
 
-    setClassification(`AI Analysis: Danger Level: ${level}`)
+    // remove "AI" wording
+    setClassification(`Danger Level: ${level}`)
 
     // get comforting questions
     const comforting = await askComfortingQuestions(text)
@@ -436,7 +439,10 @@ export default function DashboardPage() {
     setLoading(false)
     doneSound.current?.play?.()
     push(`Call ${newId} analyzed as ${level}`)
-    setView('priority')
+
+    // keep user on Live Call instead of redirecting
+    const REDIRECT_ON_END = false
+    if (REDIRECT_ON_END) setView('priority') // kept the code, but gated
   }
 
   // NEW: derived & utilities
@@ -511,7 +517,7 @@ export default function DashboardPage() {
           </div>
           <div className="brand-text">
             <h1>Call Sense</h1>
-            <p className="tag">Real-time triage, calm under pressure.</p>
+            <p className="tag">Real time triage, calm under pressure.</p>
           </div>
         </div>
         <div className="header-actions">
@@ -594,9 +600,9 @@ export default function DashboardPage() {
                     We help call centers move faster and calmer.
                   </motion.h2>
                   <p>
-                    Call Sense listening assists dispatchers with live transcription, AI-powered priority,
-                    and auto-generated checklists and comfort questions. Reduce response times,
-                    improve caller outcomes, and document everything — seamlessly.
+                    Call Sense listening supports dispatchers with live transcription, smart priority,
+                    and helpful checklists and comfort questions. Reduce response times,
+                    improve caller outcomes, and document everything, seamlessly.
                   </p>
                   <div className="hero-cta">
                     <button className="cta" onClick={() => setView('live')}>Start Live Call</button>
@@ -623,9 +629,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="selling-points">
-                    <div className="point">⚡ Real-time triage scoring</div>
-                    <div className="point">🧭 Guided questions & prompts</div>
-                    <div className="point">📄 Instant summaries & details</div>
+                    <div className="point">⚡ Real time triage scoring</div>
+                    <div className="point">🧭 Guided questions and prompts</div>
+                    <div className="point">📄 Instant summaries and details</div>
                     <div className="point">🔐 Your dashboard, your data</div>
                   </div>
                 </div>
@@ -636,18 +642,18 @@ export default function DashboardPage() {
               <div className="value-grid">
                 <div className="value-card">
                   <h3>Why Call Sense</h3>
-                  <p>Most calls are chaotic. We structure the chaos by extracting what matters,
-                    suggesting the next best question, and keeping the dispatcher in control.</p>
+                  <p>Most calls are chaotic. We organize what matters,
+                    suggest the next question, and keep the dispatcher in control.</p>
                 </div>
                 <div className="value-card">
                   <h3>How it works</h3>
-                  <p>Transcribe live, classify urgency with AI, auto-fill critical details,
-                    and manage dispatch from one place. Export for reports anytime.</p>
+                  <p>Transcribe live, score urgency, fill in critical details,
+                    and manage dispatch from one place. Export reports any time.</p>
                 </div>
                 <div className="value-card">
                   <h3>Built for teams</h3>
-                  <p>Keyboard shortcuts, CSV export, dark mode, and a modern UX that feels fast.
-                    Use it in training or production workflows.</p>
+                  <p>Keyboard shortcuts, CSV export, dark mode, and a modern interface that feels fast.
+                    Use it for training or daily work.</p>
                 </div>
               </div>
             </section>
@@ -833,7 +839,8 @@ export default function DashboardPage() {
                     )}
                   </AnimatePresence>
 
-                  {comfortingQuestions.length > 0 && (
+                  {/* HIDE "Suggested Questions to Ask" without deleting code */}
+                  {false && comfortingQuestions.length > 0 && (
                     <div className="comforting-questions panel-section">
                       <h3>💬 Suggested Questions to Ask:</h3>
                       {comfortingQuestions.map((q, i) => (
@@ -939,7 +946,7 @@ export default function DashboardPage() {
 
       <footer className="footer">
         <div>© {new Date().getFullYear()} Call Sense</div>
-        <div className="footer-right">Built with ❤️ for dispatchers</div>
+        <div className="footer-right">Built with love for dispatchers</div>
       </footer>
 
       <Toasts />
@@ -947,7 +954,7 @@ export default function DashboardPage() {
       {/* Detail Modal */}
       <Modal
         open={!!detailModalId}
-        title={detailModalId ? `Call Details — ${detailModalId}` : 'Call Details'}
+        title={detailModalId ? `Call Details - ${detailModalId}` : 'Call Details'}
         onClose={() => setDetailModalId(null)}
       >
         {!detailCall ? (
