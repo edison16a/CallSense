@@ -38,7 +38,6 @@ function splitIntoLines(reply: string): string[] {
 export async function classifyTranscript(text: string): Promise<ClassificationResult> {
   try {
     const response = await generateContent('classify', text)
-    console.log(response)
     const reply = (firstPartText(response) || emptyResponseText).toLowerCase()
     return levelFromResponseText(reply)
   } catch {
