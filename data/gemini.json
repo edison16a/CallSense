@@ -1,0 +1,25 @@
+{
+  "$comment": "Google Gemini request configuration and prompt templates. {{transcript}} is substituted with the joined live transcript at call time. Prompt wording is product copy, not logic: tune it here without touching TypeScript.",
+  "baseUrl": "https://generativelanguage.googleapis.com/v1beta/models",
+  "model": "gemini-2.0-flash",
+  "method": "generateContent",
+  "prompts": {
+    "classify": [
+      "Transcript:\n{{transcript}}",
+      "\nRate this high (if any guns or deaths involved), medium (if its a car crash or other), or low priority (Like cat stuck in tree or just feeling nervous). Please indicate in the response if it is high/medium/low use those exact words"
+    ],
+    "comfortingQuestions": [
+      "Transcript:\n{{transcript}}",
+      "\nWhat other helpful questions or comforting questions can I ask?"
+    ],
+    "importantDetails": [
+      "Using the following transcript, please return which details are important for law enforcement (address, name, and what's happening). If there is nothing important, return an empty space. Do not use formatting such as astericks or titles.",
+      "\nThen after that, using the transcript provided, make additional questions as needed to clarify the situation.",
+      "\nTranscript:\n{{transcript}}"
+    ],
+    "furtherQuestions": [
+      "Using the following transcript, give me 5 questions I can ask to make the caller feel better or to ensure his safety.",
+      "\nTranscript:\n{{transcript}}"
+    ]
+  }
+}
