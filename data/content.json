@@ -62,7 +62,8 @@
     "sendUnitsLabel": "Send Units",
     "detailsLabel": "Details",
     "detailsTitle": "Open details",
-    "finishedLabel": "Finished"
+    "finishedLabel": "Finished",
+    "progressIcon": "\ud83d\ude94"
   },
   "current": {
     "heading": "Current Calls",
