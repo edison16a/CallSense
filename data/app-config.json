@@ -1,0 +1,53 @@
+{
+  "$comment": "Runtime configuration: persistence keys, timings, limits and feature flags. Values were previously magic numbers and string literals inside the dashboard component.",
+  "defaultView": "home",
+  "defaultTheme": "light",
+  "storageKeys": {
+    "priority": "CALL_SENSE_priority",
+    "current": "CALL_SENSE_current",
+    "view": "CALL_SENSE_view",
+    "theme": "CALL_SENSE_theme"
+  },
+  "timings": {
+    "toastDurationMs": 3000,
+    "analysisDelayMs": 3000,
+    "progressTickMs": 1000
+  },
+  "limits": {
+    "maxStoredCalls": 50,
+    "maxWaitMinutes": 10,
+    "minImportantDetailLength": 3,
+    "questionsHeadingIndex": 1
+  },
+  "callId": {
+    "prefix": "CS-",
+    "timestampDigits": 6
+  },
+  "waitTime": {
+    "unit": "min"
+  },
+  "csv": {
+    "filenamePrefix": "call_sense_priority_",
+    "headers": [
+      "id",
+      "level",
+      "waitTime"
+    ],
+    "mimeType": "text/csv;charset=utf-8;"
+  },
+  "speechRecognition": {
+    "continuous": true,
+    "interimResults": false,
+    "lang": "en-US"
+  },
+  "features": {
+    "$comment": "Both flags are off in the shipped app. They were `false` literals in JSX and a `const REDIRECT_ON_END = false` gate; keeping them as data preserves the author's intent to leave the code paths reachable rather than deleting them.",
+    "showComfortingQuestions": false,
+    "redirectToPriorityOnEndCall": false
+  },
+  "sounds": {
+    "$comment": "Placeholder data URIs carried over verbatim from the original source. They are truncated base64 and therefore do not decode to playable audio - see README.",
+    "send": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYB...",
+    "done": "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYB..."
+  }
+}

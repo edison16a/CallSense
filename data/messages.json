@@ -1,0 +1,23 @@
+{
+  "$comment": "Toast notifications and generated transcript/status lines. {{name}} placeholders are substituted at call time.",
+  "toasts": {
+    "micError": "Mic error, stopped listening.",
+    "unitsDispatched": "Units dispatched for {{id}}",
+    "highlighted": "Highlighted current text.",
+    "markedDangerous": "Call manually marked as dangerous.",
+    "exportedCsv": "Exported CSV.",
+    "demoAppended": "Simulated transcript appended.",
+    "dataCleared": "All data cleared.",
+    "callAnalyzed": "Call {{id}} analyzed as {{level}}"
+  },
+  "transcript": {
+    "callerLine": "Caller: {{text}}",
+    "emptyTranscript": "Caller: (no transcript captured)",
+    "dangerLevelLine": "Danger Level: {{level}}",
+    "timestampLine": "Timestamp: {{timestamp}}"
+  },
+  "classification": {
+    "dangerLevel": "Danger Level: {{level}}",
+    "manualDanger": "Manually marked as dangerous"
+  }
+}
