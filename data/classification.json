@@ -1,0 +1,16 @@
+{
+  "$comment": "Danger-level taxonomy and the rules that map a model response (or, when the model is unreachable, the raw transcript) onto a level.",
+  "levels": ["High", "Medium", "Low"],
+  "unknownLevel": "Unknown",
+  "responseKeywords": [
+    { "keyword": "high", "level": "High" },
+    { "keyword": "medium", "level": "Medium" },
+    { "keyword": "low", "level": "Low" }
+  ],
+  "emptyResponseText": "medium",
+  "keywordFallback": [
+    { "pattern": "fire|smoke|shots|gun", "level": "High" },
+    { "pattern": "fight|missing|accident|burglary", "level": "Medium" }
+  ],
+  "keywordFallbackDefault": "Low"
+}
