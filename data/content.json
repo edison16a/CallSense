@@ -1,5 +1,9 @@
 {
   "$comment": "Every user-visible string in the dashboard. Copy changes are edits here, not edits to components. Text is stored pre-collapsed to a single line because JSX already collapses interior newlines and indentation to one space - storing it this way makes the JSON the literal rendered output.",
+  "metadata": {
+    "title": "CallSense Dashboard",
+    "description": "Police call prioritization & live transcripts"
+  },
   "header": {
     "initials": "CS",
     "title": "Call Sense",

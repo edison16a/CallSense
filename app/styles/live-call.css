@@ -1,0 +1,26 @@
+/* === Live Call Panel Additions === */
+.current-call-panel {
+  background-color: var(--white); border-radius: 18px; box-shadow: var(--shadow-sm);
+  padding: 1rem; margin-top: 0.25rem; border: 1px solid var(--gray-200);
+}
+.current-call-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.live-transcript {
+  background-color: var(--gray-100); border-radius: var(--radius);
+  padding: 1rem; margin-bottom: 0.5rem; font-size: 0.95rem; min-height: 80px;
+}
+.classification {
+  font-weight: 800; font-size: 1rem; color: var(--gray-700);
+  background: #e0f2fe; border: 1px solid #bae6fd; padding: 8px 12px; border-radius: 10px;
+  display: inline-block; margin-bottom: 10px;
+}
+.loading-panel { padding: 12px; }
+.skeleton-row {
+  height: 16px; background: linear-gradient(90deg, #e5e7eb, #f3f4f6, #e5e7eb);
+  border-radius: 6px; margin: 8px 0; animation: shimmer 1.2s infinite;
+}
+.skeleton-row.short { width: 60%; }
+@keyframes shimmer { 0%{background-position:-200px 0;} 100%{background-position:200px 0;} }
+
+/* === Panels (sections) === */
+.panel-section { padding: 8px 10px 14px; }
+.comforting-question, .further-question { background: var(--gray-100); padding: 6px 8px; border-radius: 8px; margin: 4px 0; }

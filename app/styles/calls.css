@@ -1,0 +1,59 @@
+/* === Search Bar === */
+.search-bar {
+  display: flex; align-items: center; background-color: var(--gray-100);
+  border-radius: var(--radius); padding: 0.5rem 1rem; margin: 0.25rem 0;
+  border: 1px solid var(--gray-200);
+}
+.search-bar input { border: none; outline: none; background: transparent; flex: 1; font-size: 1rem; color: var(--gray-800); }
+.search-bar .search-icon { width: 1rem; height: 1rem; margin-right: 0.5rem; }
+
+/* === Call List Items === */
+.call-list { list-style: none; overflow-y: auto; max-height: 480px; }
+.call-item { border-bottom: 1px solid var(--gray-200); }
+.call-item:last-child { border-bottom: none; }
+.call-summary {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  align-items: center; padding: 0.9rem 1rem; gap: 0.5rem;
+}
+.call-summary.row { grid-template-columns: 1.2fr 0.7fr 0.7fr 1.4fr; }
+.call-summary:hover { background-color: var(--gray-100); }
+.call-from { font-weight: 700; font-size: 1rem; }
+.linkish { background: transparent; color: var(--primary-blue); border: none; text-align: left; cursor: pointer; }
+.row-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.toggle-btn {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  border: none; border-radius: 10px;
+  padding: 0.5rem 0.9rem; font-size: 0.875rem; cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+.toggle-btn:hover { background-color: var(--dark-blue); transform: translateY(-1px); }
+.toggle-btn.warn { background: var(--accent-amber); color: #111827; }
+.toggle-btn.success { background: var(--accent); }
+.toggle-btn.mic.on { box-shadow: 0 0 0 3px rgba(34,197,94,0.25); }
+.ghost-btn {
+  background: transparent; color: var(--primary-blue); border: 1px solid var(--primary-blue);
+  padding: 8px 10px; border-radius: 10px; cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.ghost-btn:hover { transform: translateY(-1px); }
+
+.transcript { padding: 1rem; background-color: var(--gray-100); border-top: 1px solid var(--gray-200); }
+.transcript p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+
+/* === Progress === */
+.progress-wrap { position: relative; width: 140px; height: 18px; background: #eef2ff; border-radius: 6px; overflow: hidden; border: 1px solid #dbeafe; }
+.progress-bar {
+  height: 100%; transition: width 1s linear; background: linear-gradient(90deg, #60a5fa, #2563eb);
+}
+.progress-emoji { position: absolute; top: -12px; transform: translateX(-50%); }
+
+/* === Priority Badge === */
+.priority-badge {
+  display: inline-block; padding: 0.3rem 0.6rem; font-size: 0.75rem; font-weight: 800;
+  border-radius: 999px; text-transform: uppercase; letter-spacing: .06em;
+}
+.priority-badge.high { background-color: #DC2626; color: var(--white); }
+.priority-badge.medium { background-color: #FBBF24; color: #111827; }
+.priority-badge.low { background-color: #16A34A; color: var(--white); }
+.finished { font-weight: 800; color: var(--accent); }

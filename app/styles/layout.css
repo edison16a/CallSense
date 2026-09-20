@@ -1,0 +1,10 @@
+/* === Dashboard Layout === */
+.app-root { min-height: 100dvh; display: flex; flex-direction: column; }
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+.important-details { list-style: disc inside; margin: 4px 0 0 20px; padding: 0; }
+.important-detail { font-weight: 600; padding: 4px 10px 4px 12px; border-radius: 6px; margin: 3px 0; background: var(--gray-100); }

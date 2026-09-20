@@ -21,7 +21,11 @@ import { execSync } from 'node:child_process'
 /** Commit holding the monolith, i.e. the last commit before the refactor. */
 const REV = process.argv[2] ?? '8db7918'
 
-const original = execSync(`git show ${REV}:app/page.tsx`, { encoding: 'utf8' })
+// layout.tsx as well as page.tsx: the document metadata strings were extracted
+// from the root layout, not the dashboard.
+const original = ['app/page.tsx', 'app/layout.tsx']
+  .map(file => execSync(`git show ${REV}:${file}`, { encoding: 'utf8' }))
+  .join('\n')
 /** Whitespace-collapsed copy, so multi-line JSX text nodes can be matched. */
 const collapsed = original.replace(/\s+/g, ' ')
 
@@ -74,7 +78,7 @@ for (const file of ['data/content.json', 'data/navigation.json', 'data/demo-tran
 
 console.log(
   failed === 0
-    ? `OK  ${checked} extracted strings all occur verbatim in ${REV}:app/page.tsx`
+    ? `OK  ${checked} extracted strings all occur verbatim in ${REV}:app/{page,layout}.tsx`
     : `\n${failed} of ${checked} strings did NOT match`
 )
 process.exit(failed === 0 ? 0 : 1)

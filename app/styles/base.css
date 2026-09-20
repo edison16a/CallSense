@@ -1,0 +1,33 @@
+/* === Reset === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-size: 16px;
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(59,130,246,0.08), transparent 50%),
+              radial-gradient(1000px 500px at 110% 0%, rgba(30,58,138,0.10), transparent 50%),
+              var(--light-blue);
+  color: var(--gray-800);
+}
+body { line-height: 1.5; }
+a { color: var(--secondary-blue); text-decoration: none; transition: color var(--transition-fast); }
+a:hover { color: var(--primary-blue); }
+
+/* === Utility Helpers === */
+.flex { display: flex; }
+.grid { display: grid; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.rounded { border-radius: var(--radius); }
+.shadow { box-shadow: var(--shadow-sm); }
+.mt-4 { margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.p-4 { padding: 1rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+
+/* === Scrollbar Styling === */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--gray-200); border-radius: var(--radius); }
+::-webkit-scrollbar-thumb { background: var(--gray-400); border-radius: var(--radius); }

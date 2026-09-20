@@ -1,0 +1,48 @@
+/* === Header === */
+.header {
+  background: var(--brand-grad);
+  color: #f8fbff;
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; top: 0; z-index: 12;
+  backdrop-filter: blur(6px);
+}
+.brand { display: flex; gap: 12px; align-items: center; }
+.cs-logo {
+  width: 52px; height: 52px; border-radius: 14px; position: relative;
+  background: radial-gradient(100% 100% at 30% 20%, rgba(255,255,255,0.25), rgba(255,255,255,0.05)),
+              linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2), 0 10px 20px rgba(0,0,0,0.25);
+  display: grid; place-items: center;
+}
+.cs-logo.small { width: 36px; height: 36px; border-radius: 10px; }
+.cs-ring {
+  position: absolute; inset: 0; border-radius: inherit;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.2), inset 0 0 24px rgba(59,130,246,0.45);
+  animation: pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.65; box-shadow: 0 0 0 2px rgba(255,255,255,0.2), inset 0 0 20px rgba(59,130,246,0.35);}
+  50%{opacity:1; box-shadow: 0 0 0 2px rgba(255,255,255,0.28), inset 0 0 28px rgba(59,130,246,0.7);} }
+.cs-initials { font-weight: 800; letter-spacing: .5px; color: #eaf1ff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+.brand-text h1 { font-size: 1.5rem; letter-spacing: 0.04em; font-weight: 800; }
+.tag { font-size: 0.85rem; opacity: 0.9; margin-top: -2px; }
+.header-actions { display: flex; gap: 10px; align-items: center; }
+.chip {
+  border: 1px solid rgba(255,255,255,0.6);
+  background: transparent; color: #edf3ff;
+  padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.chip:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px); }
+
+.user-menu { position: relative; }
+.user-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.6);
+  cursor: pointer; transition: transform var(--transition-fast);
+  background: #fff;
+}
+.user-avatar:hover { transform: scale(1.08); }

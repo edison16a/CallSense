@@ -1,0 +1,12 @@
+/* === Responsive Adjustments === */
+@media (max-width: 1200px) {
+  .panel-hero { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .selling-points { grid-template-columns: 1fr; }
+  .value-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 1024px) {
+  .dashboard-container { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .call-summary { grid-template-columns: 1fr; gap: 8px; }
+}

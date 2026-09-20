@@ -1,0 +1,11 @@
+/* === Settings === */
+.settings-wrap { padding: 1rem; display: grid; gap: 12px; }
+.setting-row {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  border: 1px solid var(--gray-200); border-radius: 12px; padding: 10px 12px; background: var(--gray-100);
+}
+.setting-label { font-weight: 700; }
+.setting-sub { font-size: 0.85rem; color: var(--gray-600); }
+.setting-ctrl select {
+  border: 1px solid var(--gray-300); background: var(--white); border-radius: 8px; padding: 6px 8px; color: var(--gray-800);
+}
