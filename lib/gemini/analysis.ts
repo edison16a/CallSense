@@ -4,6 +4,7 @@ import {
   levelFromResponseText,
 } from '@/lib/classification'
 import {
+  candidateText,
   firstPartText,
   generateContent,
   type GeminiContent,
@@ -49,8 +50,7 @@ export async function classifyTranscript(text: string): Promise<ClassificationRe
 export async function askComfortingQuestions(text: string): Promise<string[]> {
   try {
     const response = await generateContent('comfortingQuestions', text)
-    const raw = response.candidates?.[0]?.content ?? ''
-    return splitIntoLines(String(raw))
+    return splitIntoLines(candidateText(response))
   } catch {
     return []
   }
@@ -60,8 +60,7 @@ export async function askComfortingQuestions(text: string): Promise<string[]> {
 export async function askFurtherQuestions(text: string): Promise<string[]> {
   try {
     const response = await generateContent('furtherQuestions', text)
-    const raw = response.candidates?.[0]?.content ?? ''
-    return splitIntoLines(String(raw))
+    return splitIntoLines(candidateText(response))
   } catch {
     return []
   }

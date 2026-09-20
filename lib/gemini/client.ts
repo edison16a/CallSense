@@ -94,3 +94,25 @@ export function firstPartText(response: GeminiResponse): string | undefined {
   const content = response.candidates?.[0]?.content as GeminiContent | undefined
   return content?.parts?.[0]?.text
 }
+
+/**
+ * Extracts a candidate's reply as plain text.
+ *
+ * WHAT WAS WRONG BEFORE: two callers read `candidates[0].content` and passed
+ * it straight to `String()`. But `content` is an object - `{ parts: [...],
+ * role }` - so `String()` produced the literal text "[object Object]", which
+ * was then split into lines and rendered to the dispatcher as their suggested
+ * questions. The bug survived because the sibling details parser handled the
+ * object shape correctly, so the two sat next to each other looking equivalent.
+ *
+ * Parts are joined rather than taking only the first: a long reply is split
+ * across several parts, and reading `parts[0]` alone truncates it.
+ */
+export function candidateText(response: GeminiResponse): string {
+  const content = response.candidates?.[0]?.content
+  if (content && typeof content === 'object' && Array.isArray((content as GeminiContent).parts)) {
+    return ((content as GeminiContent).parts ?? []).map(part => part.text ?? '').join('')
+  }
+  if (typeof content === 'string') return content
+  return ''
+}
