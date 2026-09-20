@@ -28,7 +28,7 @@
   transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 .toggle-btn:hover { background-color: var(--dark-blue); transform: translateY(-1px); }
-.toggle-btn.warn { background: var(--accent-amber); color: #111827; }
+.toggle-btn.warn { background: var(--accent-amber); color: var(--ink); }
 .toggle-btn.success { background: var(--accent); }
 .toggle-btn.mic.on { box-shadow: 0 0 0 3px rgba(34,197,94,0.25); }
 .ghost-btn {
@@ -42,9 +42,9 @@
 .transcript p { margin-bottom: 0.5rem; font-size: 0.9rem; }
 
 /* === Progress === */
-.progress-wrap { position: relative; width: 140px; height: 18px; background: #eef2ff; border-radius: 6px; overflow: hidden; border: 1px solid #dbeafe; }
+.progress-wrap { position: relative; width: 140px; height: 18px; background: var(--progress-track); border-radius: 6px; overflow: hidden; border: 1px solid var(--progress-track-border); }
 .progress-bar {
-  height: 100%; transition: width 1s linear; background: linear-gradient(90deg, #60a5fa, #2563eb);
+  height: 100%; transition: width 1s linear; background: linear-gradient(90deg, var(--progress-from), var(--progress-to));
 }
 .progress-emoji { position: absolute; top: -12px; transform: translateX(-50%); }
 
@@ -53,7 +53,7 @@
   display: inline-block; padding: 0.3rem 0.6rem; font-size: 0.75rem; font-weight: 800;
   border-radius: 999px; text-transform: uppercase; letter-spacing: .06em;
 }
-.priority-badge.high { background-color: #DC2626; color: var(--white); }
-.priority-badge.medium { background-color: #FBBF24; color: #111827; }
-.priority-badge.low { background-color: #16A34A; color: var(--white); }
+.priority-badge.high { background-color: var(--badge-high); color: var(--white); }
+.priority-badge.medium { background-color: var(--badge-medium); color: var(--ink); }
+.priority-badge.low { background-color: var(--badge-low); color: var(--white); }
 .finished { font-weight: 800; color: var(--accent); }

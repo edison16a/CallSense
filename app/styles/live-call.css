@@ -10,12 +10,12 @@
 }
 .classification {
   font-weight: 800; font-size: 1rem; color: var(--gray-700);
-  background: #e0f2fe; border: 1px solid #bae6fd; padding: 8px 12px; border-radius: 10px;
+  background: var(--classification-surface); border: 1px solid var(--classification-border); padding: 8px 12px; border-radius: 10px;
   display: inline-block; margin-bottom: 10px;
 }
 .loading-panel { padding: 12px; }
 .skeleton-row {
-  height: 16px; background: linear-gradient(90deg, #e5e7eb, #f3f4f6, #e5e7eb);
+  height: 16px; background: linear-gradient(90deg, var(--skeleton-base), var(--skeleton-highlight), var(--skeleton-base));
   border-radius: 6px; margin: 8px 0; animation: shimmer 1.2s infinite;
 }
 .skeleton-row.short { width: 60%; }

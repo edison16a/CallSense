@@ -1,6 +1,6 @@
 /* === Modal === */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(2,6,23,0.55); z-index: 40;
+  position: fixed; inset: 0; background: var(--modal-scrim); z-index: 40;
   display: grid; place-items: center; padding: 18px;
 }
 .modal-card {

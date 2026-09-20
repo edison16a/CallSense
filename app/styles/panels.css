@@ -25,14 +25,14 @@
   transition: background var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
 }
 .panel-header .action-btn:hover { background: var(--gray-100); transform: translateY(-1px); }
-.panel-header .action-btn.pill.active { background: var(--secondary-blue); color: #fff; border-color: transparent; }
+.panel-header .action-btn.pill.active { background: var(--secondary-blue); color: var(--pure-white); border-color: transparent; }
 
 /* Hero (Home) */
 .panel-hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem; padding: 1.25rem; }
 .hero-left h2 { font-size: 1.6rem; margin-bottom: 0.4rem; }
 .hero-cta { display: flex; gap: 10px; margin-top: 10px; }
 .cta {
-  background: var(--primary-blue); color: #fff; border: none; border-radius: 12px;
+  background: var(--primary-blue); color: var(--pure-white); border: none; border-radius: 12px;
   padding: 10px 14px; cursor: pointer; box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }

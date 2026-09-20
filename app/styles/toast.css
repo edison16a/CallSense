@@ -3,6 +3,6 @@
   position: fixed; bottom: 20px; right: 20px; z-index: 30; display: grid; gap: 8px;
 }
 .toast {
-  background: #111827; color: #fff; padding: 10px 12px; border-radius: 10px;
+  background: var(--ink); color: var(--pure-white); padding: 10px 12px; border-radius: 10px;
   box-shadow: var(--shadow-lg);
 }
