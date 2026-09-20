@@ -1,0 +1,131 @@
+{
+  "$comment": "Every user-visible string in the dashboard. Copy changes are edits here, not edits to components. Text is stored pre-collapsed to a single line because JSX already collapses interior newlines and indentation to one space - storing it this way makes the JSON the literal rendered output.",
+  "header": {
+    "initials": "CS",
+    "title": "Call Sense",
+    "tagline": "Real time triage, calm under pressure.",
+    "themeToggleTitle": "Toggle theme (Light/Dark)",
+    "themeToggleToDark": "🌙 Dark",
+    "themeToggleToLight": "☀️ Light",
+    "demoLabel": "🎬 Demo",
+    "demoTitle": "Add a demo transcript",
+    "exportLabel": "⬇️ Export",
+    "exportTitle": "Export priority as CSV",
+    "avatarSrc": "https://api.dicebear.com/7.x/initials/svg?seed=CS",
+    "avatarAlt": "User"
+  },
+  "sidebar": {
+    "title": "Navigator",
+    "clearDataLabel": "🗑️ Clear Data"
+  },
+  "footer": {
+    "copyrightPrefix": "©",
+    "copyrightName": "Call Sense",
+    "note": "Built with love for dispatchers"
+  },
+  "home": {
+    "heading": "We help call centers move faster and calmer.",
+    "intro": "Call Sense listening supports dispatchers with live transcription, smart priority, and helpful checklists and comfort questions. Reduce response times, improve caller outcomes, and document everything, seamlessly.",
+    "primaryCta": { "label": "Start Live Call", "view": "live" },
+    "secondaryCta": { "label": "View Queue", "view": "priority" },
+    "stats": [
+      { "label": "Open Items", "metric": "total", "tone": "" },
+      { "label": "High Priority", "metric": "high", "tone": "red" },
+      { "label": "Medium", "metric": "medium", "tone": "amber" },
+      { "label": "Low", "metric": "low", "tone": "green" }
+    ],
+    "sellingPoints": [
+      "⚡ Real time triage scoring",
+      "🧭 Guided questions and prompts",
+      "📄 Instant summaries and details",
+      "🔐 Your dashboard, your data"
+    ],
+    "valueCards": [
+      {
+        "title": "Why Call Sense",
+        "body": "Most calls are chaotic. We organize what matters, suggest the next question, and keep the dispatcher in control."
+      },
+      {
+        "title": "How it works",
+        "body": "Transcribe live, score urgency, fill in critical details, and manage dispatch from one place. Export reports any time."
+      },
+      {
+        "title": "Built for teams",
+        "body": "Keyboard shortcuts, CSV export, dark mode, and a modern interface that feels fast. Use it for training or daily work."
+      }
+    ]
+  },
+  "priority": {
+    "heading": "Call Priority",
+    "allFilterLabel": "All",
+    "columns": ["Call ID", "Priority", "Wait Time", "Action"],
+    "sendUnitsLabel": "Send Units",
+    "detailsLabel": "Details",
+    "detailsTitle": "Open details",
+    "finishedLabel": "Finished"
+  },
+  "current": {
+    "heading": "Current Calls",
+    "searchPlaceholder": "Search calls...",
+    "searchIcon": "🔍",
+    "quickViewLabel": "Quick View",
+    "showTranscriptLabel": "View Transcript",
+    "hideTranscriptLabel": "Hide Transcript"
+  },
+  "live": {
+    "heading": "Live Call",
+    "micTitle": "T to toggle",
+    "micStartLabel": "🎤 Start",
+    "micStopLabel": "🛑 Stop",
+    "highlightLabel": "Highlight Text",
+    "markDangerousLabel": "Mark as Dangerous",
+    "generateQuestionsLabel": "Generate Questions",
+    "endCallLabel": "End Call",
+    "comfortingHeading": "💬 Suggested Questions to Ask:",
+    "detailsHeading": "📋 Important Details:",
+    "detailsQuestionsHeading": "❓ Questions:",
+    "furtherHeading": "❓ Further Questions"
+  },
+  "settings": {
+    "heading": "Settings",
+    "toggleThemeLabel": "Toggle Theme",
+    "rows": [
+      {
+        "action": "theme",
+        "label": "Theme",
+        "description": "Choose your preferred theme.",
+        "options": [
+          { "value": "light", "label": "Light" },
+          { "value": "dark", "label": "Dark" }
+        ]
+      },
+      {
+        "action": "export",
+        "label": "CSV Export",
+        "description": "Download current priority queue.",
+        "buttonLabel": "Export Priority",
+        "buttonStyle": "toggle-btn"
+      },
+      {
+        "action": "demo",
+        "label": "Demo Data",
+        "description": "Append a sample transcript to Live Call.",
+        "buttonLabel": "Add Demo Transcript",
+        "buttonStyle": "ghost-btn"
+      },
+      {
+        "action": "clear",
+        "label": "Danger Zone",
+        "description": "Irreversible actions.",
+        "buttonLabel": "Clear All Data",
+        "buttonStyle": "danger-btn"
+      }
+    ]
+  },
+  "modal": {
+    "defaultTitle": "Call Details",
+    "titlePrefix": "Call Details - ",
+    "emptyMessage": "No transcript found.",
+    "closeLabel": "✖"
+  }
+}

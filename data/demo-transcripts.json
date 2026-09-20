@@ -1,0 +1,19 @@
+{
+  "$comment": "Canned transcripts appended to the Live Call view by the Demo button. One entry is picked at random. Add a scenario by appending an array of lines - no code change required.",
+  "transcripts": [
+    [
+      "Caller: There is smoke coming from the building at 1243 Pine Ave.",
+      "Caller: I think someone is inside yelling.",
+      "Operator: Are there visible flames or just smoke?"
+    ],
+    [
+      "Caller: I just witnessed a car crash on 5th and Main.",
+      "Caller: One person looks hurt, airbags deployed.",
+      "Operator: Are emergency lanes clear for first responders?"
+    ],
+    [
+      "Caller: My cat is stuck on the roof again...",
+      "Operator: Are you or the cat in immediate danger?"
+    ]
+  ]
+}

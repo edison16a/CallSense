@@ -1,0 +1,11 @@
+{
+  "$comment": "Single source of truth for the sidebar. Each item drives the nav button, the keyboard shortcut, and the shortcut hint line at the top of the sidebar - previously three separate hard-coded lists that could drift apart.",
+  "items": [
+    { "view": "home", "icon": "🏠", "label": "Home", "shortcut": "h" },
+    { "view": "live", "icon": "🎤", "label": "Live Call", "shortcut": "l" },
+    { "view": "priority", "icon": "📞", "label": "Call Priority", "shortcut": "p" },
+    { "view": "current", "icon": "📝", "label": "Current Calls", "shortcut": "c" },
+    { "view": "settings", "icon": "⚙️", "label": "Settings", "shortcut": "s" }
+  ],
+  "toggleListeningShortcut": "t"
+}
