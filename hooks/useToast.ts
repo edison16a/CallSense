@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useCallback, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useCallback, useState } from 'react'
 import { config } from '@/lib/config'
 
 /** A transient notification. `id` doubles as the React key and the dismissal handle. */
@@ -11,7 +10,7 @@ export interface Toast {
 }
 
 /**
- * Queue of transient notifications plus the element that renders them.
+ * Queue of transient notifications.
  *
  * Each toast removes itself after config.timings.toastDurationMs via its own
  * timer, rather than one shared sweep, so toasts raised at different moments
@@ -35,25 +34,7 @@ export function useToast() {
     )
   }, [])
 
-  const Toasts = () => (
-    <div className="toast-wrap">
-      <AnimatePresence>
-        {toasts.map(toast => (
-          <motion.div
-            key={toast.id}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 10, opacity: 0 }}
-            className="toast"
-          >
-            {toast.msg}
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>
-  )
-
-  return { push, Toasts }
+  return { push, toasts }
 }
 
 /** The `push` callback's type, for components that only raise toasts. */

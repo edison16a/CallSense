@@ -34,7 +34,7 @@ import type { ViewName } from '@/types/view'
  * queue, the history, the classification banner and the toast stack at once.
  */
 export function useCallCenter() {
-  const { push, Toasts } = useToast()
+  const { push, toasts } = useToast()
   const { theme, setTheme, toggleTheme } = useTheme()
   const { liveTranscripts, setLiveTranscripts, listening, toggleListening, stopListening } =
     useSpeechRecognition({ push })
@@ -225,7 +225,7 @@ export function useCallCenter() {
   )
 
   return {
-    Toasts,
+    toasts,
     view,
     setView,
     theme,

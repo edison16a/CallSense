@@ -5,6 +5,7 @@ import { AppFooter } from '@/components/layout/AppFooter'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { CallDetailModal } from '@/components/calls/CallDetailModal'
+import { ToastStack } from '@/components/ui/ToastStack'
 import { CurrentCallsView } from '@/components/views/CurrentCallsView'
 import { HomeView } from '@/components/views/HomeView'
 import { LiveCallView } from '@/components/views/LiveCallView'
@@ -26,7 +27,6 @@ import { useCallCenter } from '@/hooks/useCallCenter'
  */
 export default function DashboardPage() {
   const dashboard = useCallCenter()
-  const { Toasts } = dashboard
 
   return (
     <div className="app-root">
@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
       <AppFooter />
 
-      <Toasts />
+      <ToastStack toasts={dashboard.toasts} />
 
       <CallDetailModal
         callId={dashboard.detailModalId}
