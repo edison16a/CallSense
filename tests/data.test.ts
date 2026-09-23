@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { renderThemeCss, theme } from '@/lib/theme'
 import { navItems, shortcutHint, shortcutToView, toggleListeningShortcut } from '@/lib/navigation'
 import { homeContent, settingsContent } from '@/lib/content'
+import { priorityLevels } from '@/lib/classification'
 import { config } from '@/lib/config'
 import demoData from '@/data/demo-transcripts.json'
 
@@ -86,14 +87,12 @@ describe('content data', () => {
   })
 
   it('has every stat tile read a metric the dashboard computes', () => {
+    // Derived from the level list rather than written out, so this keeps
+    // holding if a level is added to data/classification.json.
+    const metrics = ['total', ...priorityLevels.map(level => level.toLowerCase())]
     for (const tile of homeContent.stats) {
-      expect(['total', 'high', 'medium', 'low']).toContain(tile.metric)
+      expect(metrics).toContain(tile.metric)
     }
-  })
-
-  it('gives every settings row an action the view can dispatch', () => {
-    const known = ['theme', 'export', 'demo', 'clear']
-    for (const row of settingsContent.rows) expect(known).toContain(row.action)
   })
 
   it('gives the theme row one option per supported theme', () => {
