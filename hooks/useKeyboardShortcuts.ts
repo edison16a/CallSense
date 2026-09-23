@@ -12,7 +12,7 @@ interface UseKeyboardShortcutsOptions {
 /**
  * Global single-key shortcuts for switching view and toggling the microphone.
  *
- * The key -> view mapping comes from data/navigation.json, so a new screen
+ * The mapping from key to view comes from data/navigation.json, so a new screen
  * gets its shortcut from the same entry that gives it a sidebar button. The
  * previous implementation was an if-chain that had to be edited in step with
  * the sidebar markup.

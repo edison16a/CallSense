@@ -8,8 +8,8 @@
  * wrong hex digit in a token is invisible until someone notices the shade is
  * off. Parsing the original guarantees the JSON is byte-faithful.
  *
- * It also emits tests/fixtures/legacy-theme.css — a verbatim copy of the two
- * source blocks — so the regeneration test has something to diff against that
+ * It also emits tests/fixtures/legacy-theme.css, a verbatim copy of the two
+ * source blocks, so the regeneration test has something to diff against that
  * was never touched by a human either.
  *
  * Usage: node scripts/extract-theme.mjs [source.css]

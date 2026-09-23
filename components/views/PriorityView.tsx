@@ -11,7 +11,7 @@ interface PriorityViewProps {
   calls: readonly PriorityCall[]
   filter: PriorityFilter
   onFilterChange: (filter: PriorityFilter) => void
-  /** Call id -> timestamp units were dispatched. Absent means not yet dispatched. */
+  /** Keyed by call id, holding the timestamp units were dispatched. Absent means not yet dispatched. */
   dispatched: Record<string, number>
   onSendUnits: (id: string) => void
   onOpenDetail: (id: string) => void

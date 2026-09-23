@@ -1,6 +1,6 @@
 import { config } from '@/lib/config'
 
-/** Formats a count for display, e.g. `1234` -> `"1,234"`. Locale-aware by design. */
+/** Formats a count for display, so `1234` becomes `"1,234"`. Locale-aware by design. */
 export function formatCount(value: number): string {
   return value.toLocaleString()
 }

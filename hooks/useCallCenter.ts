@@ -58,7 +58,7 @@ export function useCallCenter() {
   const [classification, setClassification] = useState('')
   const [loading, setLoading] = useState(false)
 
-  /** Call id -> the moment units were dispatched, used to compute progress. */
+  /** Keyed by call id, holding the moment units were dispatched. Used to compute progress. */
   const [dispatched, setDispatched] = useState<Record<string, number>>({})
 
   useKeyboardShortcuts({ onSelectView: setView, onToggleListening: toggleListening })

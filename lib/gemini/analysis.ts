@@ -98,7 +98,7 @@ export async function askImportantDetails(text: string): Promise<string[]> {
       .map(line => line.trim())
       .filter(line => line.length > 0)
   } catch (error) {
-    console.error('askImportantDetails error →', error)
+    console.error('askImportantDetails failed', error)
     return []
   }
 }

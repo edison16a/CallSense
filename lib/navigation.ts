@@ -28,7 +28,7 @@ export const toggleListeningShortcut = navigation.toggleListeningShortcut
  * Maps a pressed key to the view it selects.
  *
  * Derived from `navItems` rather than written out again: the previous code had
- * the key->view mapping as a separate if-chain, so adding a screen meant
+ * the mapping from key to view as a separate if-chain, so adding a screen meant
  * editing two lists and nothing complained if you edited only one.
  */
 export const shortcutToView: ReadonlyMap<string, ViewName> = new Map(

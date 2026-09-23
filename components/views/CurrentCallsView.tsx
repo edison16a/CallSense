@@ -9,7 +9,7 @@ interface CurrentCallsViewProps {
   calls: readonly CurrentCall[]
   searchTerm: string
   onSearchChange: (term: string) => void
-  /** Call id -> whether its transcript is expanded. Missing means collapsed. */
+  /** Keyed by call id. True means the transcript is expanded; missing means collapsed. */
   transcriptVisible: Record<string, boolean>
   onToggleTranscript: (id: string) => void
   onOpenDetail: (id: string) => void

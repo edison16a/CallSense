@@ -24,7 +24,7 @@ import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
 
 const STYLES_DIR = 'app/styles'
 
-/** literal -> token name. Names describe the role, not the hue. */
+/** Maps each colour literal to its token name. Names describe the role, not the hue. */
 const TOKENS = {
   '#f8fbff': '--header-text',
   '#eaf1ff': '--logo-text',

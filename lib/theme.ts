@@ -1,7 +1,7 @@
 import themeData from '@/data/theme.json'
 
 /**
- * A flat map of CSS custom property name -> value, e.g. `--primary-blue`.
+ * A flat map of CSS custom property names to their values, e.g. `--primary-blue`.
  * Keys keep their leading `--` so the JSON reads the same as the CSS it
  * replaces and a reviewer can grep for a token name across both.
  */
@@ -10,7 +10,7 @@ export type TokenMap = Readonly<Record<string, string>>
 /**
  * The full design-token set: `light` populates `:root`, `dark` is the subset
  * re-declared under `.dark`. Only the tokens that actually differ between
- * schemes appear in `dark` — everything else inherits from `:root`.
+ * schemes appear in `dark`. Everything else inherits from `:root`.
  */
 export interface Theme {
   readonly light: TokenMap

@@ -20,7 +20,7 @@ const SOURCE = process.argv[2] ?? 'app/globals.css'
 const OUT_DIR = 'app/styles'
 
 /**
- * Section marker -> partial filename. Order of the values defines the import
+ * Maps each section marker to a partial filename. Order of the values defines the import
  * order in globals.css, which must match the original source order because
  * CSS resolves equal-specificity conflicts by position.
  */
