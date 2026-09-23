@@ -7,7 +7,7 @@ import {
   askImportantDetails,
   classifyTranscript,
 } from '@/lib/gemini/analysis'
-import { UNKNOWN_LEVEL, levelFromTranscriptKeywords } from '@/lib/classification'
+import { ALL_FILTER, UNKNOWN_LEVEL, levelFromTranscriptKeywords } from '@/lib/classification'
 import { config } from '@/lib/config'
 import { csvFilename, downloadTextFile, priorityQueueToCsv } from '@/lib/csv'
 import { createCallId, nowStamp, randomWaitTime } from '@/lib/format'
@@ -49,7 +49,7 @@ export function useCallCenter() {
 
   const [transcriptVisible, setTranscriptVisible] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState('')
-  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('All')
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>(ALL_FILTER)
   const [detailModalId, setDetailModalId] = useState<string | null>(null)
 
   const [comfortingQuestions, setComfortingQuestions] = useState<string[]>([])
@@ -193,7 +193,7 @@ export function useCallCenter() {
 
   const filteredPriority = useMemo(
     () =>
-      priorityFilter === 'All'
+      priorityFilter === ALL_FILTER
         ? priorityList
         : priorityList.filter(call => call.level === priorityFilter),
     [priorityList, priorityFilter]

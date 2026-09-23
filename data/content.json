@@ -61,7 +61,6 @@
   },
   "priority": {
     "heading": "Call Priority",
-    "allFilterLabel": "All",
     "columns": ["Call ID", "Priority", "Wait Time", "Action"],
     "sendUnitsLabel": "Send Units",
     "detailsLabel": "Details",
