@@ -1,8 +1,5 @@
 import navigation from '@/data/navigation.json'
-import type { NavItem, ViewName } from '@/types/view'
-
-/** Every value ViewName permits, used to validate the data file at load time. */
-const VALID_VIEWS: readonly ViewName[] = ['home', 'priority', 'current', 'live', 'settings']
+import { VIEW_NAMES, isViewName, type NavItem, type ViewName } from '@/types/view'
 
 /**
  * The sidebar, loaded from data/navigation.json.
@@ -13,12 +10,12 @@ const VALID_VIEWS: readonly ViewName[] = ['home', 'priority', 'current', 'live',
  * the offending entry.
  */
 export const navItems: readonly NavItem[] = navigation.items.map(item => {
-  if (!VALID_VIEWS.includes(item.view as ViewName)) {
+  if (!isViewName(item.view)) {
     throw new Error(
-      `data/navigation.json: unknown view "${item.view}". Expected one of ${VALID_VIEWS.join(', ')}.`
+      `data/navigation.json: unknown view "${item.view}". Expected one of ${VIEW_NAMES.join(', ')}.`
     )
   }
-  return { ...item, view: item.view as ViewName }
+  return { ...item, view: item.view }
 })
 
 /** Shortcut key for starting/stopping the microphone. Not a view, so it lives outside `items`. */
