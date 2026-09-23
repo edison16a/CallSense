@@ -1,8 +1,11 @@
 # CallSense
 
-CallSense helps 911 operators handle high call volumes. It transcribes calls as
-they happen, pulls out the details that matter, suggests follow-up questions,
-and sorts incidents by urgency using the Google Gemini API.
+We created CallSense, which is designed to help 911 operators manage high call
+volumes by transcribing and summarizing dispatcher calls in real time using the
+Google Gemini API. It highlights key information, guides dispatchers with
+targeted questions, and uses a classification model to prioritize incidents,
+helping reduce operator burden, improve reporting accuracy, and support faster,
+better decisions.
 
 Built in ~24 hours. Winner of Milpitas Hacks!
 
@@ -21,6 +24,7 @@ npm run dev      # http://localhost:3000
 | `npm test` | Run the tests |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript, no emit |
+| `npm run verify` | All four of the above checks in one go |
 
 Live dictation uses the Web Speech API, so it needs a Chromium based browser.
 Everywhere else the microphone button does nothing and the rest of the
@@ -48,7 +52,7 @@ the types, the data, the hooks and all five screens. It is now layered.
 ```
 app/
   layout.tsx          Root layout, renders design tokens into a <style> element
-  page.tsx            Composition only: chrome plus a switch over the active view
+  page.tsx            Composition only: chrome plus the active screen
   globals.css         Imports the style partials, in order
   styles/*.css        One partial per concern (base, header, sidebar, calls)
 
@@ -59,9 +63,11 @@ components/
   calls/              CallDetailModal
 
 hooks/
-  useCallCenter       Composes everything below into the dashboard state
+  useCallCenter       Composes the hooks below into one object for the page
+  useCallRecords      The queue, the history and the open screen, all persisted
+  useCallAnalysis     The end of call pipeline, the only code that calls Gemini
   useToast            Notification queue
-  useTheme            Light/dark preference, persisted
+  useTheme            Light and dark preference, persisted
   useTicker           Forces the re-render that animates dispatch progress
   useSpeechRecognition  Web Speech dictation
   useKeyboardShortcuts  Single key navigation, driven by the nav data
@@ -71,7 +77,7 @@ lib/
   gemini/             One request function, four ways of reading the reply
   classification      Levels, plus model and keyword resolution
   config, content, messages, navigation, theme   Typed loaders over data/
-  csv, details, dispatch, format, storage        Pure helpers
+  csv, details, dispatch, format, stats, storage  Pure helpers
 
 types/                Domain types
 data/                 All content and configuration, see below
@@ -81,15 +87,14 @@ tests/                Vitest suite
 
 Two decisions worth knowing about:
 
-**One `useCallCenter` instead of a hook per screen.** Ending a call touches the
-live transcript, the queue, the call history, the classification banner and the
-toast stack in one go. Splitting that up would mean prop drilling through every
-screen or adding a context, and neither pays for itself.
-
 **Design tokens are injected by the layout.** They live in `data/theme.json`,
 and the root layout is a server component, so the generated `:root` and `.dark`
 rules are in the server rendered HTML. Writing them from a client effect would
 flash unstyled layout on first paint.
+
+**The screen table is exhaustive.** `page.tsx` maps every `ViewName` to a
+component through a `Record`, so adding a screen name without writing the screen
+is a compile error rather than a blank page.
 
 ## Data files
 
@@ -121,6 +126,12 @@ which a test checks. The Demo button picks it up right away.
 `data/classification.json`. Rules run most severe first and the first match
 wins, so put a new `High` rule above the `Medium` ones.
 
+**A danger level.** Add it to `levels` and `responseKeywords` in
+`data/classification.json`, most severe first. The filter chips and the Home
+counters both derive from that list, so they pick it up on their own. You still
+need a `.priority-badge` rule in `app/styles/calls.css` to give it a color, and
+a tile in `content.json` if you want it on the Home screen.
+
 **New wording.** Find the string in `data/content.json` (grouped by screen) or
 `data/messages.json` (toasts and transcript lines). `{{placeholders}}` are
 filled in at runtime, and an unknown one stays visible so a typo is obvious.
@@ -140,10 +151,11 @@ ends. Both ship off.
 
 ### Adding a screen (this one needs code)
 
-Add the name to `ViewName` in `types/view.ts`, add an entry to
+Add the name to `VIEW_NAMES` in `types/view.ts`, add an entry to
 `data/navigation.json`, write the component under `components/views/`, and add
-one branch in `app/page.tsx`. The sidebar button, the keyboard shortcut and the
-hint line all come from that one data entry.
+it to the screen table in `app/page.tsx`. The sidebar button, the keyboard
+shortcut and the hint line all come from that one data entry, and the compiler
+will not let you skip the last step.
 
 ## Scripts
 
