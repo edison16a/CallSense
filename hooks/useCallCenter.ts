@@ -10,6 +10,7 @@ import {
 import { ALL_FILTER, UNKNOWN_LEVEL, levelFromTranscriptKeywords } from '@/lib/classification'
 import { config } from '@/lib/config'
 import { csvFilename, downloadTextFile, priorityQueueToCsv } from '@/lib/csv'
+import { computeCallStats } from '@/lib/stats'
 import { createCallId, nowStamp, randomWaitTime } from '@/lib/format'
 import { classificationMessages, formatMessage, toastMessages, transcriptMessages } from '@/lib/messages'
 import { readRaw, writeJson, writeRaw } from '@/lib/storage'
@@ -214,15 +215,7 @@ export function useCallCenter() {
     [detailModalId, currentCalls]
   )
 
-  const stats: CallStats = useMemo(
-    () => ({
-      total: priorityList.length,
-      high: priorityList.filter(call => call.level === 'High').length,
-      medium: priorityList.filter(call => call.level === 'Medium').length,
-      low: priorityList.filter(call => call.level === 'Low').length,
-    }),
-    [priorityList]
-  )
+  const stats: CallStats = useMemo(() => computeCallStats(priorityList), [priorityList])
 
   return {
     toasts,

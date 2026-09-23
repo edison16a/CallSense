@@ -35,10 +35,18 @@ export interface CurrentCall {
 /** The filter chips above the priority queue: every level, plus an "All" escape hatch. */
 export type PriorityFilter = PriorityLevel | 'All'
 
-/** Counts shown on the Home dashboard tiles. Keys match `metric` in data/content.json. */
-export interface CallStats {
+/**
+ * The per-level keys in CallStats, derived from PriorityLevel rather than
+ * written out again. Adding a level to data/classification.json therefore
+ * gives it a counter automatically instead of silently getting none.
+ */
+export type LevelCountKey = Lowercase<PriorityLevel>
+
+/**
+ * Counts shown on the Home dashboard tiles. Keys match the `metric` field in
+ * data/content.json, which is what lets a tile say which number it displays.
+ */
+export type CallStats = Record<LevelCountKey, number> & {
+  /** Every call in the queue, regardless of level. */
   total: number
-  high: number
-  medium: number
-  low: number
 }
