@@ -4,6 +4,8 @@ CallSense helps 911 operators handle high call volumes. It transcribes calls as
 they happen, pulls out the details that matter, suggests follow-up questions,
 and sorts incidents by urgency using the Google Gemini API.
 
+Build in ~24 hours. Winner of Milpitas Hacks!
+
 ## Getting started
 
 ```bash
