@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { settingsContent } from '@/lib/content'
-import type { ThemeName } from '@/lib/theme'
+import { settingsContent, type SettingsButtonAction } from '@/lib/content'
+import { isThemeName, type ThemeName } from '@/lib/theme'
 
 interface SettingsViewProps {
   theme: ThemeName
@@ -18,9 +18,10 @@ interface SettingsViewProps {
  *
  * Rows come from data/content.json and name their behaviour with an `action`
  * key, which this component maps to a handler. That keeps the labels,
- * descriptions and button styling editable without code while leaving the
- * behaviour itself where it can be type-checked - a row naming an unknown
- * action simply renders nothing rather than silently doing the wrong thing.
+ * descriptions and button styling editable without code while the behaviour
+ * itself stays type-checked. lib/content.ts rejects an unknown action at
+ * startup, and the handler map below is keyed by the action type, so adding
+ * an action without wiring it up will not compile.
  */
 export function SettingsView({
   theme,
@@ -30,7 +31,7 @@ export function SettingsView({
   onSimulateCall,
   onClearData,
 }: SettingsViewProps) {
-  const actionHandlers: Record<string, () => void> = {
+  const actionHandlers: Record<SettingsButtonAction, () => void> = {
     export: onExportCsv,
     demo: onSimulateCall,
     clear: onClearData,
@@ -57,7 +58,12 @@ export function SettingsView({
               {row.action === 'theme' ? (
                 <select
                   value={theme}
-                  onChange={event => onThemeChange(event.target.value as ThemeName)}
+                  onChange={event => {
+                    // The dropdown can only offer what is in the data file, so
+                    // an unrecognised value means that file is wrong. Ignore it
+                    // rather than pushing a bad theme into localStorage.
+                    if (isThemeName(event.target.value)) onThemeChange(event.target.value)
+                  }}
                 >
                   {row.options?.map(option => (
                     <option value={option.value} key={option.value}>
@@ -66,7 +72,10 @@ export function SettingsView({
                   ))}
                 </select>
               ) : (
-                <button className={row.buttonStyle} onClick={actionHandlers[row.action]}>
+                <button
+                  className={row.buttonStyle}
+                  onClick={actionHandlers[row.action as SettingsButtonAction]}
+                >
                   {row.buttonLabel}
                 </button>
               )}

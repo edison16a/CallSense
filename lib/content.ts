@@ -31,7 +31,44 @@ export const footerContent = content.footer
 export const priorityContent = content.priority
 export const currentContent = content.current
 export const liveContent = content.live
-export const settingsContent = content.settings
+/**
+ * The behaviours a settings row can name.
+ *
+ * Declared as a runtime list so data/content.json can be checked against it.
+ * A row naming an unknown action used to render a button whose onClick was
+ * undefined: it looked enabled, did nothing when pressed, and reported
+ * nothing anywhere.
+ */
+export const SETTINGS_ACTIONS = ['theme', 'export', 'demo', 'clear'] as const
+
+/** One settings row's behaviour. */
+export type SettingsAction = (typeof SETTINGS_ACTIONS)[number]
+
+/** Every settings row except the theme dropdown, which is not a plain button. */
+export type SettingsButtonAction = Exclude<SettingsAction, 'theme'>
+
+/** A settings row, with its action narrowed and validated. */
+export interface SettingsRow {
+  action: SettingsAction
+  label: string
+  description: string
+  buttonLabel?: string
+  buttonStyle?: string
+  options?: readonly { value: string; label: string }[]
+}
+
+export const settingsContent = {
+  ...content.settings,
+  rows: content.settings.rows.map(row => {
+    if (!(SETTINGS_ACTIONS as readonly string[]).includes(row.action)) {
+      throw new Error(
+        `data/content.json: unknown settings action "${row.action}". ` +
+          `Expected one of ${SETTINGS_ACTIONS.join(', ')}.`
+      )
+    }
+    return row as SettingsRow
+  }) as readonly SettingsRow[],
+}
 export const modalContent = content.modal
 
 export const homeContent = {

@@ -20,8 +20,20 @@ export interface Theme {
 /** The design tokens, loaded from data/theme.json. Adding a token is a JSON edit. */
 export const theme: Theme = { light: themeData.light, dark: themeData.dark }
 
-/** The two colour schemes the UI can be in. Used for the toggle and persistence. */
+/** The colour schemes the UI can be in. Used for the toggle and persistence. */
 export type ThemeName = keyof Theme
+
+/**
+ * Narrows an untrusted string to a ThemeName.
+ *
+ * Two values arrive from outside the compiler's reach: the option a user picks
+ * in the Settings dropdown, and the scheme restored from a previous session's
+ * localStorage. Both were previously cast straight to ThemeName, so a stale or
+ * hand-edited value would flow through as if it were valid.
+ */
+export function isThemeName(value: unknown): value is ThemeName {
+  return typeof value === 'string' && Object.hasOwn(theme, value)
+}
 
 /** Renders one token map as the body of a CSS rule. */
 function renderTokens(tokens: TokenMap): string {
