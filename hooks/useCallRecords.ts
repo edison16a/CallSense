@@ -6,6 +6,7 @@ import { config } from '@/lib/config'
 import { computeCallStats } from '@/lib/stats'
 import { readRaw, writeJson, writeRaw } from '@/lib/storage'
 import type { CallStats, CurrentCall, PriorityCall, PriorityFilter } from '@/types/call'
+import { isViewName } from '@/types/view'
 import type { ViewName } from '@/types/view'
 
 /**
@@ -36,10 +37,14 @@ export function useCallRecords() {
     try {
       const storedPriority = readRaw(config.storageKeys.priority)
       const storedCurrent = readRaw(config.storageKeys.current)
-      const storedView = readRaw(config.storageKeys.view) as ViewName | null
+      const storedView = readRaw(config.storageKeys.view)
       if (storedPriority) setPriorityList(JSON.parse(storedPriority))
       if (storedCurrent) setCurrentCalls(JSON.parse(storedCurrent))
-      if (storedView) setView(storedView)
+      // Checked, not cast. A stored name that no longer exists used to be
+      // restored as-is and then looked up against the screen table, which
+      // returned nothing: a blank content area, no active sidebar item, and
+      // the bad value written straight back to storage on the next render.
+      if (isViewName(storedView)) setView(storedView)
     } catch {
       // Corrupt or unavailable storage: start from a clean dashboard.
     }
