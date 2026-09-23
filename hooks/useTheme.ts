@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { config } from '@/lib/config'
-import { writeRaw } from '@/lib/storage'
-import type { ThemeName } from '@/lib/theme'
+import { readRawOrNull, writeRaw } from '@/lib/storage'
+import { isThemeName, type ThemeName } from '@/lib/theme'
 
 /**
  * Light/dark preference, persisted to localStorage and applied by toggling a
@@ -13,15 +13,15 @@ import type { ThemeName } from '@/lib/theme'
  * during the first client render, but the server rendered the default theme,
  * so a returning dark-mode user hydrates with a mismatch and a flash of light.
  * Fixing it properly means either an inline pre-hydration script or accepting
- * a deliberate one-frame flash - a product decision, not a refactor.
+ * a deliberate one-frame flash, which is a product decision rather than a
+ * refactor.
  */
 export function useTheme() {
-  const [theme, setTheme] = useState<ThemeName>(
-    () =>
-      (typeof window !== 'undefined' &&
-        (localStorage.getItem(config.storageKeys.theme) as ThemeName | null)) ||
-      config.defaultTheme
-  )
+  const [theme, setTheme] = useState<ThemeName>(() => {
+    if (typeof window === 'undefined') return config.defaultTheme
+    const stored = readRawOrNull(config.storageKeys.theme)
+    return isThemeName(stored) ? stored : config.defaultTheme
+  })
 
   useEffect(() => {
     writeRaw(config.storageKeys.theme, theme)

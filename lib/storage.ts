@@ -14,6 +14,23 @@ export function readRaw(key: string): string | null {
   return localStorage.getItem(key)
 }
 
+/**
+ * Reads a raw string, returning null if storage cannot be reached at all.
+ *
+ * For readers that have no enclosing guard, which means anything running
+ * during render rather than inside an effect. Browsers throw a SecurityError
+ * on any localStorage access when site data is blocked, so an unguarded read
+ * in a state initialiser takes down the whole app before it paints.
+ */
+export function readRawOrNull(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    // Storage disabled or blocked by the browser. Caller falls back to a default.
+    return null
+  }
+}
+
 /** Writes a string, ignoring quota and private-mode failures. */
 export function writeRaw(key: string, value: string): void {
   try {
