@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { config } from '@/lib/config'
 
 /** A transient notification. `id` doubles as the React key and the dismissal handle. */
@@ -20,13 +20,22 @@ export function useToast() {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   /**
-   * Stable across renders so effects can depend on it without re-subscribing.
-   * The id is the current clock reading, which is also why two toasts raised
-   * within the same millisecond would collide - acceptable, since they are
-   * raised by discrete user actions.
+   * Source of toast ids.
+   *
+   * WHAT WAS WRONG BEFORE: the id was Date.now(). Two toasts raised in the
+   * same millisecond got the same id, which gave React duplicate keys in the
+   * stack and, worse, made the first dismissal timer filter both of them out
+   * three seconds early. Ending a call raises its toast immediately after the
+   * analysis promises settle, so a second toast landing in the same tick is
+   * not hypothetical.
+   *
+   * A counter in a ref cannot collide and does not care about the clock.
    */
+  const nextId = useRef(0)
+
+  /** Stable across renders so effects can depend on it without re-subscribing. */
   const push = useCallback((msg: string) => {
-    const id = Date.now()
+    const id = nextId.current++
     setToasts(current => [...current, { id, msg }])
     setTimeout(
       () => setToasts(current => current.filter(toast => toast.id !== id)),
