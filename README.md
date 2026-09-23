@@ -4,14 +4,6 @@ CallSense helps 911 operators handle high call volumes. It transcribes calls as
 they happen, pulls out the details that matter, suggests follow-up questions,
 and sorts incidents by urgency using the Google Gemini API.
 
-## Screenshots
-
-<img width="1906" height="926" alt="CallSense home dashboard" src="https://github.com/user-attachments/assets/f7f54ee8-744e-4438-b383-5fb1114d9b31" />
-
-<img width="1901" height="926" alt="CallSense live call view" src="https://github.com/user-attachments/assets/72c750d7-c336-438d-94ea-4da44abbb8a3" />
-
-<img width="1905" height="831" alt="CallSense call priority queue" src="https://github.com/user-attachments/assets/fc74bfc8-f92e-4d7a-bdc6-28255b1c6663" />
-
 ## Getting started
 
 ```bash
